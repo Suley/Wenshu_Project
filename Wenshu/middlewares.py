@@ -9,17 +9,19 @@ from scrapy import signals
 import random, base64
 
 
-# 随机User-Agent，暂时未看懂... ...
+# 随机User-Agent
 class RandomUserAgentMiddleware(object):
     def __init__(self, agents):
+        """接收从from_crawler传的List-agents"""
         self.agents = agents
 
     @classmethod
     def from_crawler(cls, crawler):
+        """从settings读取USER_AGENTS，传参到构造函数"""
         return cls(crawler.settings.getlist('USER_AGENTS'))
 
     def process_request(self, request, spider):
-        # print("********Current UserAgent********" + random.choice(self.agents))
+        """修改每一个request的header"""
         request.headers.setdefault('User-Agent', random.choice(self.agents))
 
 
@@ -27,7 +29,7 @@ class RandomUserAgentMiddleware(object):
 class ProxyMiddleware(object):
     def __init__(self):
         """准备连接动态代理的基本信息"""
-        # 阿布云代理服务器
+        # 阿布云代理服务器, 记得要买动态版的
         self.proxyServer = "http://http-dyn.abuyun.com:9020"
         # 代理隧道验证信息
         proxyUser = "******填写阿布云通行证*******"
