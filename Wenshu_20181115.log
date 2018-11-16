@@ -1,0 +1,60 @@
+2018-11-15 12:29:17 [scrapy.utils.log] INFO: Scrapy 1.5.0 started (bot: Wenshu)
+2018-11-15 12:29:17 [scrapy.utils.log] INFO: Versions: lxml 4.2.5.0, libxml2 2.9.5, cssselect 1.0.3, parsel 1.5.1, w3lib 1.19.0, Twisted 18.9.0, Python 3.6.0 (v3.6.0:41df79263a11, Dec 23 2016, 08:06:12) [MSC v.1900 64 bit (AMD64)], pyOpenSSL 18.0.0 (OpenSSL 1.1.0i  14 Aug 2018), cryptography 2.4.1, Platform Windows-10-10.0.17134-SP0
+2018-11-15 12:29:17 [scrapy.crawler] INFO: Overridden settings: {'BOT_NAME': 'Wenshu', 'CONCURRENT_REQUESTS_PER_DOMAIN': 1000000, 'COOKIES_ENABLED': False, 'DOWNLOAD_TIMEOUT': 8, 'FEED_FORMAT': 'json', 'FEED_URI': 'items.json', 'LOG_FILE': 'Wenshu_20181115.log', 'LOG_LEVEL': 'INFO', 'NEWSPIDER_MODULE': 'Wenshu.spiders', 'REDIRECT_ENABLED': False, 'RETRY_TIMES': 3, 'SPIDER_MODULES': ['Wenshu.spiders']}
+2018-11-15 12:29:17 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.telnet.TelnetConsole',
+ 'scrapy.extensions.feedexport.FeedExporter',
+ 'scrapy.extensions.logstats.LogStats']
+2018-11-15 12:29:17 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['Wenshu.middlewares.RandomUserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'Wenshu.middlewares.ProxyMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2018-11-15 12:29:17 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2018-11-15 12:29:17 [scrapy.middleware] INFO: Enabled item pipelines:
+['Wenshu.pipelines.WenshuPipeline']
+2018-11-15 12:29:17 [scrapy.core.engine] INFO: Spider opened
+2018-11-15 12:29:17 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2018-11-15 12:30:29 [scrapy.extensions.logstats] INFO: Crawled 31 pages (at 31 pages/min), scraped 114 items (at 114 items/min)
+2018-11-15 12:31:23 [scrapy.extensions.logstats] INFO: Crawled 31 pages (at 0 pages/min), scraped 216 items (at 102 items/min)
+2018-11-15 12:32:26 [scrapy.extensions.logstats] INFO: Crawled 48 pages (at 17 pages/min), scraped 330 items (at 114 items/min)
+2018-11-15 12:33:13 [scrapy.core.engine] INFO: Closing spider (finished)
+2018-11-15 12:33:13 [scrapy.extensions.feedexport] INFO: Stored json feed (410 items) in: items.json
+2018-11-15 12:33:13 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/exception_count': 88,
+ 'downloader/exception_type_count/twisted.internet.error.TimeoutError': 72,
+ 'downloader/exception_type_count/twisted.web._newclient.ResponseNeverReceived': 16,
+ 'downloader/request_bytes': 205001,
+ 'downloader/request_count': 285,
+ 'downloader/request_method_count/GET': 1,
+ 'downloader/request_method_count/POST': 284,
+ 'downloader/response_bytes': 439188,
+ 'downloader/response_count': 197,
+ 'downloader/response_status_count/200': 50,
+ 'downloader/response_status_count/429': 138,
+ 'downloader/response_status_count/503': 9,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2018, 11, 15, 4, 33, 13, 733351),
+ 'item_scraped_count': 410,
+ 'log_count/INFO': 11,
+ 'request_depth_max': 3,
+ 'response_received_count': 50,
+ 'scheduler/dequeued': 285,
+ 'scheduler/dequeued/memory': 285,
+ 'scheduler/enqueued': 285,
+ 'scheduler/enqueued/memory': 285,
+ 'start_time': datetime.datetime(2018, 11, 15, 4, 29, 17, 764180)}
+2018-11-15 12:33:13 [scrapy.core.engine] INFO: Spider closed (finished)
