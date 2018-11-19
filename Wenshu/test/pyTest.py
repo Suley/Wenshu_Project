@@ -6,5 +6,7 @@
 @file:  pyTest.py
 @time:  2018/11/15
 """
+import urllib.request
 
-print([x for x in range(10)])
+proxystr = urllib.request.urlopen('http://172.19.105.82:8887/resouce/getproxy?num=1').read().decode('utf-8')
+print(proxystr)
