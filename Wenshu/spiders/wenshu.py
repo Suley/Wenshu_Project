@@ -78,11 +78,11 @@ class WenshuSpider(scrapy.Spider):
         html = response.text
         result = eval(json.loads(html))
         count = result[0]['Count']
-        print('*******日期{}:该筛选条件下共有多少条数据:{} ********'.format(response.meta['date'], count))
+        print('*******{}:该日期下数据数据量:{}'.format(response.meta['date'], count))
         # 计算出请求多少页
-        page = math.ceil(int(count) / 10)  # 向上取整,每页10条
+        page = math.ceil(int(count) / 20)  # 向上取整,每页10条
         for i in range(1, int(page) + 1):
-            if i <= 20:  # max:10*20=200 ; 20181005 -只能爬取20页,每页10条!!!
+            if i <= 20:  # max:10*20=200 ; 20181005 -只能爬取20页,每页10条!!!!!!
                 url = 'http://wenshu.court.gov.cn/List/ListContent'
                 data = {
                     'Param': '裁判日期:{}  TO {}'.format(response.meta['date'], response.meta['date']),
@@ -115,7 +115,7 @@ class WenshuSpider(scrapy.Spider):
             casewenshuid = i.get('文书ID', '')
             docid = self.decrypt_id(runeval, casewenshuid)
             # print('*************文书ID:' + docid)
-            # 只需要docid
+            # 只需要docid和判决日期
             count_num += 1
             item = WenshuDocidItem()
             item['docid'] = docid
@@ -124,7 +124,7 @@ class WenshuSpider(scrapy.Spider):
 
             # url = 'http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx?DocID={}'.format(docid)
             # yield scrapy.Request(url, callback=self.get_detail, dont_filter=True)
-        print(count_num)
+        print('******我还没有挂掉!!!爬了{}个!!!'.format(count_num))
 
     def decrypt_id(self, RunEval, id):
         """
