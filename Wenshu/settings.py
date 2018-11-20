@@ -15,12 +15,12 @@ BOT_NAME = 'Wenshu'
 SPIDER_MODULES = ['Wenshu.spiders']
 NEWSPIDER_MODULE = 'Wenshu.spiders'
 
+
 #连接MongoDB数据库
 MONGODB_HOST = '127.0.0.1'
 MONGODB_PORT = 27017
 MONGODB_DBNAME = 'Henry' #数据库名
 MONGODB_DOCNAME = 'wenshu' #表名
-
 # 设置本地的IP代理池地址
 # PROXY_POOL_URL = 'http://localhost:5555/random'
 # DELETE_PROXY_URL = 'http://localhost:5555/del/'
@@ -191,6 +191,13 @@ USER_AGENTS = [
     "Mozilla/5.0 (Linux; U; Android 1.6; es-es; SonyEricssonX10i Build/R1FA016) AppleWebKit/528.5  (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
     "Mozilla/5.0 (Linux; U; Android 1.6; en-us; SonyEricssonX10i Build/R1AA056) AppleWebKit/528.5  (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
 ]
+
+# 设置开始时间，结束时间
+BEGIN_DATE = "2018-11-01"
+END_DATE = "2018-11-01"
+
+# 设置案由
+CASE = ["刑事案由", "民事案由", "行政案由", ""]
 
 # 设置日志
 # 日志文件

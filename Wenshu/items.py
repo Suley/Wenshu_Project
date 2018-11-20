@@ -29,8 +29,7 @@ class WenshuCaseItem(scrapy.Item):
     caseclosemethod = scrapy.Field()
     caseeffectivelevel = scrapy.Field()
 
-# 只要docid
+# 只要docid和裁判日期
 class WenshuDocidItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
     docid = scrapy.Field()
+    judgedate = scrapy.Field()

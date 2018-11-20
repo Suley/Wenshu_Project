@@ -7,7 +7,7 @@
 import urllib
 
 from scrapy import signals
-import random, base64
+import random
 
 
 # 随机User-Agent
@@ -36,7 +36,7 @@ class ProxyMiddleware(object):
     def process_request(self, request, spider):
         """处理请求request"""
         proxystr = urllib.request.urlopen(self.proxyServer).read().decode('utf-8')
-        print(proxystr)
+        # print(proxystr)
         request.meta['proxy'] = 'http://' + proxystr
 
     def process_response(self, request, response, spider):
