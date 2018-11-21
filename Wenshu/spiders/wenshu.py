@@ -82,7 +82,7 @@ class WenshuSpider(scrapy.Spider):
         count = result[0]['Count']
         print('*******{}:该日期下数据数据量:{}'.format(response.meta['date'], count))
         # 计算出请求多少页
-        page = math.ceil(int(count) / 20)  # 向上取整,每页10条
+        page = math.ceil(int(count) / 10)  # 向上取整,每页10条
         for i in range(1, int(page) + 1):
             if i <= 20:  # max:10*20=200 ; 20181005 -只能爬取20页,每页10条!!!!!!
                 url = 'http://wenshu.court.gov.cn/List/ListContent'
