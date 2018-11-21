@@ -108,7 +108,6 @@ class WenshuSpider(scrapy.Spider):
 
     def get_docid(self, response):
         """计算出docid"""
-        print(response.request.date['Index'])
         html = response.text
         result = eval(json.loads(html))
         runeval = result[0]['RunEval']
