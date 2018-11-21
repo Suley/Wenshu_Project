@@ -103,11 +103,12 @@ class WenshuSpider(scrapy.Spider):
                     'Host': 'wenshu.court.gov.cn',
                     'Origin': 'http://wenshu.court.gov.cn',
                 }
-                yield scrapy.FormRequest(url, formdata=data, meta={'date':response.meta['date']},
+                yield scrapy.FormRequest(url, formdata=data, meta={'date': response.meta['date']},
                                          callback=self.get_docid, headers=headers, dont_filter=True)
 
     def get_docid(self, response):
         """计算出docid"""
+        print(response.request.date['Index'])
         html = response.text
         result = eval(json.loads(html))
         runeval = result[0]['RunEval']
@@ -126,13 +127,12 @@ class WenshuSpider(scrapy.Spider):
 
             # url = 'http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx?DocID={}'.format(docid)
             # yield scrapy.Request(url, callback=self.get_detail, dont_filter=True)
+        # 输出时间
         now_time = datetime.datetime.now().strftime('%H:%M:%S')
         print('******时间:{},爬了{}个!!!'.format(now_time, count_num))
 
     def decrypt_id(self, RunEval, id):
-        """
-        docid解密
-        """
+        """docid解密"""
         js = self.js_2.call("GetJs", RunEval)
         js_objs = js.split(";;")
         js1 = js_objs[0] + ';'

@@ -16,11 +16,6 @@ SPIDER_MODULES = ['Wenshu.spiders']
 NEWSPIDER_MODULE = 'Wenshu.spiders'
 
 
-#连接MongoDB数据库
-MONGODB_HOST = '127.0.0.1'
-MONGODB_PORT = 27017
-MONGODB_DBNAME = 'Henry' #数据库名
-MONGODB_DOCNAME = 'wenshu' #表名
 # 设置本地的IP代理池地址
 # PROXY_POOL_URL = 'http://localhost:5555/random'
 # DELETE_PROXY_URL = 'http://localhost:5555/del/'
@@ -42,7 +37,7 @@ ROBOTSTXT_OBEY = False
 # 设置参数教程:https://blog.csdn.net/q_an1314/article/details/51245011
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 300 # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
-CONCURRENT_REQUESTS_PER_SPIDER = 10 # 线程数
+CONCURRENT_REQUESTS_PER_SPIDER = 20 # 线程数
 CONCURRENT_REQUESTS_PER_DOMAIN = 1000000 # 任何单个域执行的并发（即同时）请求的最大数量
 # CONCURRENT_REQUESTS_PER_IP = 0 # 任何单个IP执行的并发（即同时）请求的最大数量 ; 默认值（0），这样就禁用了对每个IP的限制
 
@@ -193,8 +188,8 @@ USER_AGENTS = [
 ]
 
 # 设置开始时间，结束时间
-BEGIN_DATE = "2000-01-01"
-END_DATE = "2018-01-01"
+BEGIN_DATE = "2001-01-01"
+END_DATE = "2001-01-01"
 
 # 设置案由
 CASE = ["刑事案由", "民事案由", "行政案由", ""]
