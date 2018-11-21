@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import scrapy, time, json, re, math, execjs
-from Wenshu.items import WenshuCaseItem, WenshuDocidItem
+import datetime
+
+import scrapy, json, re, math, execjs
+from Wenshu.items import WenshuDocidItem
 from Wenshu.spiders.utils import timeutils
 
 
@@ -17,9 +19,9 @@ class WenshuSpider(scrapy.Spider):
         # 获取日期的迭代器
         self.get_date = timeutils.get_between_day(kwargs["begin_date"], kwargs["end_date"])
         self.guid = 'aaaabbbb-aaaa-aaaabbbb-aaaabbbbcccc'
-        with open('Wenshu\spiders\get_vl5x.js', encoding='utf-8') as f:
+        with open(r'Wenshu/spiders/get_vl5x.js', encoding='utf-8') as f:
             jsdata_1 = f.read()
-        with open('Wenshu\spiders\docid.js', encoding='utf-8') as f:
+        with open(r'Wenshu/spiders/docid.js', encoding='utf-8') as f:
             jsdata_2 = f.read()
         self.js_1 = execjs.compile(jsdata_1)
         self.js_2 = execjs.compile(jsdata_2)
@@ -124,7 +126,8 @@ class WenshuSpider(scrapy.Spider):
 
             # url = 'http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx?DocID={}'.format(docid)
             # yield scrapy.Request(url, callback=self.get_detail, dont_filter=True)
-        print('******我还没有挂掉!!!爬了{}个!!!'.format(count_num))
+        now_time = datetime.datetime.now().strftime('%H:%M:%S')
+        print('******时间:{},爬了{}个!!!'.format(now_time, count_num))
 
     def decrypt_id(self, RunEval, id):
         """

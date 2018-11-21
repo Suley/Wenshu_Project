@@ -5,10 +5,6 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
-import pymongo,time
-from pymongo.errors import DuplicateKeyError
-from scrapy.conf import settings
-
 
 # 1.简单同步存储item
 class WenshuPipeline(object):

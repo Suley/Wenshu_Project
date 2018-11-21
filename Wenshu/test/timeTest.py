@@ -21,5 +21,8 @@ def get_between_day(begin_date, end_date=None):
         yield date_str
 
 
-for i in get_between_day("2012-01-01"):
-    print(i)
+# for i in get_between_day("2012-01-01"):
+#     print(i)
+
+now_time = datetime.datetime.now().strftime('%H:%M:%S')
+print(now_time)
