@@ -49,7 +49,7 @@ class ProxyMiddleware(object):
             html = None
 
         if response.status != 200 or html is None or 'remind key' in html or 'remind' in html or '请开启JavaScript' in html or '服务不可用' in html:
-            # print('正在重新请求************')
+            print('正在重新请求************')
             new_request = request.copy()
             # 为了重复请求不被过滤
             new_request.dont_filter = True
