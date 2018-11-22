@@ -94,7 +94,7 @@ class WenshuSpider(scrapy.Spider):
                     'Order': '裁判日期',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
                     'Direction': 'asc',  # 排序方式(1.asc:从小到大/2.desc:从大到小)
                     'vl5x': response.meta['vl5x'],  # 保存1个小时
-                    'number': response.meta['number'],  # 每次都要请求一次GetCode,获取number带入
+                    'number': response.meta['number'],
                     'guid': self.guid
                 }
                 headers = {
