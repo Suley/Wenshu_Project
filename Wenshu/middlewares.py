@@ -9,7 +9,7 @@ import urllib
 
 import execjs
 import requests
-from scrapy import signals
+from scrapy import signals, FormRequest
 import random
 
 
@@ -93,18 +93,33 @@ class Vjkl5Middleware(object):
         self.vl5x = None
 
     def process_request(self, request, spider):
-        """处理返回的response"""
+        """修改vjkl5"""
         self.num += 1
         if self.num % 100 == 0:
-            vjkl5 = self.request_cookie()
-            if vjkl5 is not None:
-                self.vjkl5 = vjkl5
-                self.vl5x = self.js_1.call('getvl5x', vjkl5)
-                spider.vjkl5 = vjkl5
-                spider.vl5x = self.js_1.call('getvl5x', vjkl5)
-                print("***新的vjkl5:" + vjkl5)
-        # if vjkl5 is not None:
-        #     pass
+            # 重试3次
+            for i in range(3):
+                tp_vjkl5 = self.request_cookie()
+                if tp_vjkl5 is not None:
+                    break
+            if tp_vjkl5 is not None:
+                self.vjkl5 = tp_vjkl5
+                self.vl5x = self.js_1.call('getvl5x', tp_vjkl5)
+                # 爬虫的request也更新
+                spider.vjkl5 = self.vjkl5
+                spider.vl5x = self.vl5x
+                print("***新的vlx5:" + self.vl5x)
+
+        # FormRequest的修改form表单需要编码
+        if self.vjkl5 is not None and type(request) == FormRequest:
+            # 修改form表单！！！
+            s = request._body.decode('utf-8')
+            index = s.find('vl5x=')
+            s = s[:index + 5] + self.vl5x + s[index + 29:len(s)]
+            request._body = s.encode('utf-8')
+
+            request.headers.setdefault('Cookie', 'vjkl5={0}'.format(self.vjkl5).encode('utf-8'))
+            # 没有这个函数
+            # request.formdata.setdefault('vl5x', self.vl5x.encode('utf-8'))
 
     def request_cookie(self):
         """
@@ -113,13 +128,13 @@ class Vjkl5Middleware(object):
         """
         proxy_url = requests.get(self.PROXY_SERVER).text
         # 代理
-        proxies = {"http": proxy_url}
+        proxies = {"http": "http://" + proxy_url}
+        headers = {"User-Agent": random.choice(self.agents)}
         try:
-            headers = {"User-Agent": random.choice(self.agents)}
-            response = requests.get(self.COOKIE_URL, headers=headers, proxies=proxies)
-            vjkl5 = response.headers['Set-Cookie']
-            vjkl5 = vjkl5.split(';')[0].split('=')[1]
-            return vjkl5
+            res = requests.get(self.COOKIE_URL, headers=headers, proxies=proxies, timeout=8)
+            tp_vjkl5 = res.headers['Set-Cookie']
+            tp_vjkl5 = tp_vjkl5.split(';')[0].split('=')[1]
+            return tp_vjkl5
         except Exception as e:
             print(e)
             return None

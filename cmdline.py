@@ -7,9 +7,8 @@ __author__ = 'Henry'
 from scrapy import cmdline
 
 
+# 可以加断点，右键debug运行
 if __name__ == '__main__':
     # execute的参数类型为一个列表
     # 写法一
     cmdline.execute('scrapy crawl wenshu -o items.json'.split())
-    # 写法二
-    # cmdline.execute(['scrapy', 'crawl', 'wenshu'])

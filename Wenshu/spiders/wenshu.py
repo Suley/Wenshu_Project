@@ -107,9 +107,7 @@ class WenshuSpider(scrapy.Spider):
         result = eval(json.loads(html))
         runeval = result[0]['RunEval']
         content = result[1:]
-        print(response.request.headers['Cookie'])
-        # 用于测试，计数
-        # count_num = 0
+        # print(response.request.headers['Cookie'])
         for i in content:
             casewenshuid = i.get('文书ID', '')
             docid = self.decrypt_id(runeval, casewenshuid)
@@ -121,8 +119,8 @@ class WenshuSpider(scrapy.Spider):
             item['judgedate'] = response.meta['date']
             yield item
         # 输出时间
-        # now_time = datetime.datetime.now().strftime('%H:%M:%S')
-        # print('******时间:{},爬了{}个!!!'.format(now_time, count_num))
+        now_time = datetime.datetime.now().strftime('%H:%M:%S')
+        print('***时间: {}'.format(now_time))
 
     def decrypt_id(self, RunEval, id):
         """docid解密"""
