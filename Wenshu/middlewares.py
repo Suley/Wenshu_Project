@@ -4,8 +4,11 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
+import time
 import urllib
 
+import execjs
+import requests
 from scrapy import signals
 import random
 
@@ -28,28 +31,32 @@ class RandomUserAgentMiddleware(object):
 
 # 代理服务器
 class ProxyMiddleware(object):
-    def __init__(self):
-        """准备连接动态代理的基本信息"""
-        self.proxyServer = "http://172.19.105.82:8887/resouce/getproxy?num=1"
 
-    # 修改request头
+    PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1"
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        """从settings读取USER_AGENTS，传参到构造函数"""
+        return cls(crawler.settings.getlist('USER_AGENTS'))
+
+    def __init__(self, agents):
+        """准备连接动态代理的基本信息"""
+        self.agents = agents
+
     def process_request(self, request, spider):
         """处理请求request"""
-        proxystr = urllib.request.urlopen(self.proxyServer).read().decode('utf-8')
-        # print(proxystr)
-        request.meta['proxy'] = 'http://' + proxystr
+        # 使用代理
+        proxy_url = requests.get(self.PROXY_SERVER).text
+        request.meta['proxy'] = 'http://' + proxy_url
 
     def process_response(self, request, response, spider):
         """处理返回的response"""
-        # print(response.url)
-        html = None
         try:
             html = response.body.decode()
         except UnicodeDecodeError:
             html = None
 
         if response.status != 200 or html is None or 'remind key' in html or 'remind' in html or '请开启JavaScript' in html or '服务不可用' in html:
-            print('正在重新请求************')
             new_request = request.copy()
             # 为了重复请求不被过滤
             new_request.dont_filter = True
@@ -58,9 +65,64 @@ class ProxyMiddleware(object):
             return response
 
     def process_exception(self, request, exception, spider):
+        """处理异常，复制一份request"""
         new_request = request.copy()
         new_request.dont_filter = True
         return new_request
+
+
+# 更新vjkl5的中间件
+class Vjkl5Middleware(object):
+
+    PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1"
+    COOKIE_URL = 'http://wenshu.court.gov.cn/list/list/?sorttype=1'
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        """从settings读取USER_AGENTS，传参到构造函数"""
+        return cls(crawler.settings.getlist('USER_AGENTS'))
+
+    def __init__(self, agents):
+        """准备工作"""
+        with open('Wenshu/spiders/get_vl5x.js', encoding='utf-8') as f:
+            jsdata_1 = f.read()
+        self.js_1 = execjs.compile(jsdata_1)
+        self.agents = agents
+        self.num = 0
+        self.vjkl5 = None
+        self.vl5x = None
+
+    def process_request(self, request, spider):
+        """处理返回的response"""
+        self.num += 1
+        if self.num % 100 == 0:
+            vjkl5 = self.request_cookie()
+            if vjkl5 is not None:
+                self.vjkl5 = vjkl5
+                self.vl5x = self.js_1.call('getvl5x', vjkl5)
+                spider.vjkl5 = vjkl5
+                spider.vl5x = self.js_1.call('getvl5x', vjkl5)
+                print("***新的vjkl5:" + vjkl5)
+        # if vjkl5 is not None:
+        #     pass
+
+    def request_cookie(self):
+        """
+        请求文书网的cookie
+        :return: 返回vjkl5
+        """
+        proxy_url = requests.get(self.PROXY_SERVER).text
+        # 代理
+        proxies = {"http": proxy_url}
+        try:
+            headers = {"User-Agent": random.choice(self.agents)}
+            response = requests.get(self.COOKIE_URL, headers=headers, proxies=proxies)
+            vjkl5 = response.headers['Set-Cookie']
+            vjkl5 = vjkl5.split(';')[0].split('=')[1]
+            return vjkl5
+        except Exception as e:
+            print(e)
+            return None
 
 
 # 法一:连接阿布云动态代理隧道(付费:IP质量好)

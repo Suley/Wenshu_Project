@@ -8,6 +8,7 @@ from Wenshu.spiders.utils import timeutils
 
 class WenshuSpider(scrapy.Spider):
     name = 'wenshu'
+
     start_urls = ['http://wenshu.court.gov.cn/list/list/?sorttype=1']
 
     @classmethod
@@ -25,13 +26,15 @@ class WenshuSpider(scrapy.Spider):
             jsdata_2 = f.read()
         self.js_1 = execjs.compile(jsdata_1)
         self.js_2 = execjs.compile(jsdata_2)
+        self.vjkl5 = None
+        self.vl5x = None
 
     def parse(self, response):
         """获取cookie，设置筛选条件"""
         try:
-            vjkl5 = response.headers['Set-Cookie'].decode('utf-8')
-            vjkl5 = vjkl5.split(';')[0].split('=')[1]
-            vl5x = self.js_1.call('getvl5x', vjkl5)
+            self.vjkl5 = response.headers['Set-Cookie'].decode('utf-8')
+            self.vjkl5 = self.vjkl5.split(';')[0].split('=')[1]
+            self.vl5x = self.js_1.call('getvl5x', self.vjkl5)
             # 先算出vl5x再提交一个form请求获取页面的json数据
             url = 'http://wenshu.court.gov.cn/List/ListContent'
             # 迭代每一天
@@ -43,18 +46,18 @@ class WenshuSpider(scrapy.Spider):
                     'Page': '10',  # 只为了获取案件数目,所有请求0条就行了
                     'Order': '裁判日期',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
                     'Direction': 'asc',  # 排序方式(1.asc:从小到大/2.desc:从大到小)
-                    'vl5x': vl5x,
+                    'vl5x': self.vl5x,
                     'number': 'wens',
                     'guid': self.guid
                 }
                 headers = {
                     # 在这单独添加cookie,settings中就可以禁用cookie,防止跟踪被ban
-                    'Cookie': 'vjkl5=' + vjkl5,
+                    'Cookie': 'vjkl5=' + self.vjkl5,
                     'Host': 'wenshu.court.gov.cn',
                     'Origin': 'http://wenshu.court.gov.cn',
                 }
                 yield scrapy.FormRequest(url, formdata=data,
-                                         meta={'vjkl5': vjkl5, 'vl5x': vl5x, 'date': date},
+                                         meta={'date': date},
                                          callback=self.get_content, headers=headers, dont_filter=True)
         except Exception:
             yield scrapy.Request(WenshuSpider.start_urls, callback=self.parse, dont_filter=True)
@@ -85,13 +88,13 @@ class WenshuSpider(scrapy.Spider):
                     'Page': '10',  # 每页显示的条目数
                     'Order': '裁判日期',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
                     'Direction': 'asc',  # 排序方式(1.asc:从小到大/2.desc:从大到小)
-                    'vl5x': response.meta['vl5x'],  # 保存1个小时
+                    'vl5x': self.vl5x,  # 保存1个小时
                     'number': 'wens',
                     'guid': self.guid
                 }
                 headers = {
                     # 再次自己准备cookie
-                    'Cookie': 'vjkl5=' + response.meta['vjkl5'],
+                    'Cookie': 'vjkl5=' + self.vjkl5,
                     'Host': 'wenshu.court.gov.cn',
                     'Origin': 'http://wenshu.court.gov.cn',
                 }
@@ -104,20 +107,22 @@ class WenshuSpider(scrapy.Spider):
         result = eval(json.loads(html))
         runeval = result[0]['RunEval']
         content = result[1:]
-        count_num = 0
+        print(response.request.headers['Cookie'])
+        # 用于测试，计数
+        # count_num = 0
         for i in content:
             casewenshuid = i.get('文书ID', '')
             docid = self.decrypt_id(runeval, casewenshuid)
             # print('*************文书ID:' + docid)
             # 只需要docid和判决日期
-            count_num += 1
+            # count_num += 1
             item = WenshuDocidItem()
             item['docid'] = docid
             item['judgedate'] = response.meta['date']
             yield item
         # 输出时间
-        now_time = datetime.datetime.now().strftime('%H:%M:%S')
-        print('******时间:{},爬了{}个!!!'.format(now_time, count_num))
+        # now_time = datetime.datetime.now().strftime('%H:%M:%S')
+        # print('******时间:{},爬了{}个!!!'.format(now_time, count_num))
 
     def decrypt_id(self, RunEval, id):
         """docid解密"""
