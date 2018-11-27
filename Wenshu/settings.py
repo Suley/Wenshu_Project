@@ -86,7 +86,7 @@ DOWNLOADER_MIDDLEWARES = {
     'Wenshu.middlewares.RandomUserAgentMiddleware': 1,
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
     'Wenshu.middlewares.ProxyMiddleware': 300,
-    'Wenshu.middlewares.Vjkl5Middleware': 320
+    'Wenshu.middlewares.Vjkl5Middleware': 260
 }
 
 # Enable or disable extensions
@@ -189,7 +189,7 @@ USER_AGENTS = [
 
 # 设置开始时间，结束时间
 BEGIN_DATE = "2001-01-01"
-END_DATE = "2001-01-01"
+END_DATE = "2002-01-01"
 
 # 设置案由
 CASE = ["刑事案由", "民事案由", "行政案由", ""]

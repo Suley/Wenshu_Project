@@ -3,7 +3,7 @@ import datetime
 
 import scrapy, json, re, math, execjs
 from Wenshu.items import WenshuDocidItem
-from Wenshu.spiders.utils import timeutils
+from Wenshu.utils import timeutils
 
 
 class WenshuSpider(scrapy.Spider):

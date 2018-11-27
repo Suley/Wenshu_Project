@@ -111,15 +111,13 @@ class Vjkl5Middleware(object):
 
         # FormRequest的修改form表单需要编码
         if self.vjkl5 is not None and type(request) == FormRequest:
-            # 修改form表单！！！
+            # 修改form表单！！！访问私有属性，堪称无敌，request.replace() 需要重新构造一个dict，还不如这样
             s = request._body.decode('utf-8')
             index = s.find('vl5x=')
             s = s[:index + 5] + self.vl5x + s[index + 29:len(s)]
             request._body = s.encode('utf-8')
-
+            # 修改headers
             request.headers.setdefault('Cookie', 'vjkl5={0}'.format(self.vjkl5).encode('utf-8'))
-            # 没有这个函数
-            # request.formdata.setdefault('vl5x', self.vl5x.encode('utf-8'))
 
     def request_cookie(self):
         """
