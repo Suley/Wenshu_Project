@@ -12,6 +12,7 @@ import json
 import re
 import math
 import execjs
+import logging
 from Wenshu.items import WenshuDocidItem
 from Wenshu.utils import timeutils
 from Wenshu.utils.maptree import WenshuCase
@@ -44,18 +45,22 @@ class WenshuSpider(scrapy.Spider):
         self.vjkl5 = None
         self.vl5x = None
 
-    def get_request_data(self, date, case_name=None, page='1'):
+    def get_request_data(self, date, case_id='#', page='1'):
         """
         :param date: 日期字符串，必要
         :param case_name: 案由名字符串，不必要
         :param page: str，页数字符串，不必要
         :return: data字典
         """
+        if case_id == '#':
+            param = '裁判日期:{0}  TO {1}'.format(date, date)
+        else:
+            param = '案由:{0},裁判日期:{1}  TO {2}'.format(self.cls_case.case[case_id].name, date, date)
         return {
             # 筛选条件
-            'Param': '裁判日期:{0}  TO {1}'.format(date, date),
+            'Param': param,
             'Index': page,  # 页数
-            'Page': '10',  # 只为了获取案件数目,所有请求0条就行了
+            'Page': '10',  # 获取案件数目
             'Order': '裁判日期',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
             'Direction': 'asc',  # 排序方式(1.asc:从小到大/2.desc:从大到小)
             'vl5x': self.vl5x,
@@ -83,8 +88,8 @@ class WenshuSpider(scrapy.Spider):
         for date in self.get_date:
             data = self.get_request_data(date)
             headers = self.get_request_headers()
-            yield scrapy.FormRequest(self.LIST_URL, headers=headers, formdata=data,
-                                     meta={'date': date},
+            yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
+                                     meta={'date': date, 'case_id': '#'},
                                      callback=self.get_content, dont_filter=True)
 
     def get_content(self, response):
@@ -97,56 +102,60 @@ class WenshuSpider(scrapy.Spider):
             print("get_content() json解析错误或者json数据错误")
             return response.request.copy()
 
-        print('*******{}:该日期下数据数据量:{}'.format(response.meta['date'], count))
+        date = response.meta['date']
+        case_id = response.meta['case_id']
+        case_name = self.cls_case.case[case_id].name
+        print('*******日期:{}, 案由:{}, 数据量:{}'.format(date, case_name, count))
 
         # 如果数据量超过200，迭代案由
         if int(count) > 200:
-            return self.get_case_formrequst(response)
+            return self.get_case_formrequst(date, case_id, response)
         else:
-            return self.get_pages(count, response)
+            return self.get_pages(date, case_id, count, response)
 
-    def get_case_formrequst(self, response):
+    def get_case_formrequst(self, date, case_id, response):
         """
-        根据cid和response制作一份Formrequest返回
-        :param cid:
-        :return: 各种封装的request
+        根据date和case_id制作一份Formrequest返回
+        :param date: 日期
+        :param case_id: 案由id
+        :param response: 响应
+        :return: item or FormRequest
         """
-        case_id = None
-        sonid_list = None
-        meta = response.meta
-        if case_id in meta.keys():
-            case_id = meta['case_id']
-            if case_id in self.cls_case.case.keys():
-                sonid_list = self.cls_case.case[case_id].son_list
-            else:
-                # 没有子案由还超过200条, 有时间再写个函数记录一下
-                # 就直接获取200条算了
-                return self.get_pages(200, response)
+        sonid_list = self.cls_case.case[case_id].son_list
+        if len(sonid_list) == 0:
+            # 没有子案由还超过200条, 得到200条数据，输出到日志INFO
+            logging.INFO('日期: {}, 案由: {} 条件下超过200条数据')
+            for i in self.get_pages(200, response):
+                yield i
         else:
-            sonid_list = self.cls_case.case['#'].son_list
+            for cid in sonid_list:
+                data = self.get_request_data(date=date, case_id=cid)
+                headers = self.get_request_headers()
+                yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
+                                         meta={'date': date, 'case_id': cid},
+                                         callback=self.get_content, dont_filter=True)
 
-        for cid in sonid_list:
-            # 获取参数
-            data = self.get_request_data(response.meta['date'], case_name=self.cls_case.case[cid].name)
-            headers = self.get_request_headers()
-            yield scrapy.FormRequest(self.LIST_URL, headers=headers, formdata=data,
-                                     meta={'date': response.meta['date']},
-                                     callback=self.get_content, dont_filter=True)
-
-    def get_pages(self, count, response):
-        """获取不超过200条数据"""
+    def get_pages(self, date, case_id, count, response):
+        """
+        获取不超过200条数据
+        :param date: 日期
+        :param case_id: 案由id
+        :param count: 总数
+        :param response: 响应
+        :return: item
+        """
         # 计算出请求多少页
         page = math.ceil(int(count) / 10)  # 向上取整,每页10条
         # 第一页的数据不用请求，直接获取
         for i in self.get_docid(response):
-            yield
+            yield i
 
         for i in range(2, int(page) + 1):
             if i <= 20:  # max:10*20=200 ; 20181005 -只能爬取20页,每页10条!!!!!!
-                data = self.get_request_data(date=response['date'], page=str(i))
+                data = self.get_request_data(date=date, case_id=case_id, page=str(i))
                 headers = self.get_request_headers()
-                yield scrapy.FormRequest(self.LIST_URL, headers=headers, formdata=data,
-                                         meta={'date': response.meta['date']},
+                yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
+                                         meta={'date': date},
                                          callback=self.get_docid,  dont_filter=True)
 
     def get_docid(self, response):
@@ -159,6 +168,7 @@ class WenshuSpider(scrapy.Spider):
         except:
             print("get_docid() json解析错误或者json数据错误")
             yield response.request.copy()
+
         for i in content:
             casewenshuid = i.get('文书ID', '')
             docid = self.decrypt_id(runeval, casewenshuid)
@@ -170,8 +180,8 @@ class WenshuSpider(scrapy.Spider):
             item['judgedate'] = response.meta['date']
             yield item
         # 输出时间
-        now_time = datetime.datetime.now().strftime('%H:%M:%S')
-        print('***时间: {}'.format(now_time))
+        #now_time = datetime.datetime.now().strftime('%H:%M:%S')
+        #print('***时间: {}'.format(now_time))
 
     def decrypt_id(self, RunEval, id):
         """docid解密"""

@@ -97,6 +97,7 @@ class Vjkl5Middleware(object):
         self.num += 1
         if self.num % 100 == 0:
             # 重试3次
+            tp_vjkl5 = None
             for i in range(3):
                 tp_vjkl5 = self.request_cookie()
                 if tp_vjkl5 is not None:
@@ -108,6 +109,8 @@ class Vjkl5Middleware(object):
                 spider.vjkl5 = self.vjkl5
                 spider.vl5x = self.vl5x
                 print("***新的vlx5:" + self.vl5x)
+            else:
+                print("***更新vlx5失败")
 
         # FormRequest的修改form表单需要编码
         if self.vjkl5 is not None and type(request) == FormRequest:
@@ -133,8 +136,7 @@ class Vjkl5Middleware(object):
             tp_vjkl5 = res.headers['Set-Cookie']
             tp_vjkl5 = tp_vjkl5.split(';')[0].split('=')[1]
             return tp_vjkl5
-        except Exception as e:
-            print(e)
+        except:
             return None
 
 
