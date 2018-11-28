@@ -86,7 +86,8 @@ class WenshuSpider(scrapy.Spider):
             return response.request.copy()
         # 迭代每一天
         for date in self.get_date:
-            data = self.get_request_data(date)
+            # 修改案由需要改两处地方，测试用
+            data = self.get_request_data(date, case_id='#')
             headers = self.get_request_headers()
             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                      meta={'date': date, 'case_id': '#'},
@@ -105,7 +106,8 @@ class WenshuSpider(scrapy.Spider):
         date = response.meta['date']
         case_id = response.meta['case_id']
         case_name = self.cls_case.case[case_id].name
-        print('*******日期:{}, 案由:{}, 数据量:{}'.format(date, case_name, count))
+        if count != '0':
+            print('*******日期:{}, 案由:{}, 数据量:{}'.format(date, case_name, count))
 
         # 如果数据量超过200，迭代案由
         if int(count) > 200:
@@ -172,9 +174,6 @@ class WenshuSpider(scrapy.Spider):
         for i in content:
             casewenshuid = i.get('文书ID', '')
             docid = self.decrypt_id(runeval, casewenshuid)
-            # print('*************文书ID:' + docid)
-            # 只需要docid和判决日期
-            # count_num += 1
             item = WenshuDocidItem()
             item['docid'] = docid
             item['judgedate'] = response.meta['date']
