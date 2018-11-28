@@ -16,10 +16,6 @@ SPIDER_MODULES = ['Wenshu.spiders']
 NEWSPIDER_MODULE = 'Wenshu.spiders'
 
 
-# 设置本地的IP代理池地址
-# PROXY_POOL_URL = 'http://localhost:5555/random'
-# DELETE_PROXY_URL = 'http://localhost:5555/del/'
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'Wenshu (+http://www.yourdomain.com)'
 
@@ -36,10 +32,10 @@ ROBOTSTXT_OBEY = False
 
 # 设置参数教程:https://blog.csdn.net/q_an1314/article/details/51245011
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-# CONCURRENT_REQUESTS = 300 # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
-CONCURRENT_REQUESTS_PER_SPIDER = 10 # 线程数
-CONCURRENT_REQUESTS_PER_DOMAIN = 1000000 # 任何单个域执行的并发（即同时）请求的最大数量
-# CONCURRENT_REQUESTS_PER_IP = 0 # 任何单个IP执行的并发（即同时）请求的最大数量 ; 默认值（0），这样就禁用了对每个IP的限制
+CONCURRENT_REQUESTS = 80  # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
+# CONCURRENT_REQUESTS_PER_SPIDER = 30  # 线程数
+# CONCURRENT_REQUESTS_PER_DOMAIN = 100  # 任何单个域执行的并发（即同时）请求的最大数量
+# CONCURRENT_REQUESTS_PER_IP = 0  # 任何单个IP执行的并发（即同时）请求的最大数量 ; 默认值（0），这样就禁用了对每个IP的限制
 
 # 启用DNS内存缓存
 DNSCACHE_ENABLED = True
@@ -49,9 +45,9 @@ DNSCACHE_ENABLED = True
 # See also autothrottle settings and docs
 
 # 下载延迟
-DOWNLOAD_DELAY = 0 # scrapy的并发请求，只有在delay=0时才能实现;心疼服务器的可以加点延迟~
+DOWNLOAD_DELAY = 0  # scrapy的并发请求，只有在delay=0时才能实现;心疼服务器的可以加点延迟~
 # 下载超时
-DOWNLOAD_TIMEOUT = 8 # 减小下载超时能让卡住的连接能被快速的放弃并解放处理其他站点的能力,默认15秒
+DOWNLOAD_TIMEOUT = 8  # 减小下载超时能让卡住的连接能被快速的放弃并解放处理其他站点的能力,默认15秒
 # 但是减小下载超时可能会引发错误:
 # TimeoutError: User timeout caused connection failure: Getting http://xxx.com. took longer than 15.0 seconds.
 
@@ -189,8 +185,8 @@ USER_AGENTS = [
 
 
 # 设置开始时间，结束时间
-BEGIN_DATE = "2001-01-01"
-END_DATE = "2001-01-01"
+BEGIN_DATE = "2018-06-01"
+END_DATE = "2018-06-01"
 
 
 # 设置日志

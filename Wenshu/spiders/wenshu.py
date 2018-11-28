@@ -13,7 +13,7 @@ import re
 import math
 import execjs
 import logging
-from Wenshu.items import WenshuDocidItem
+from Wenshu.items import WenshuJsonItem
 from Wenshu.utils import timeutils
 from Wenshu.utils.maptree import WenshuCase
 
@@ -110,10 +110,11 @@ class WenshuSpider(scrapy.Spider):
             print('*******日期:{}, 案由:{}, 数据量:{}'.format(date, case_name, count))
 
         # 如果数据量超过200，迭代案由
-        if int(count) > 200:
+        int_count = int(count)
+        if int_count > 200:
             return self.get_case_formrequst(date, case_id, response)
-        else:
-            return self.get_pages(date, case_id, count, response)
+        elif int_count > 0:
+                return self.get_pages(date, case_id, count, response)
 
     def get_case_formrequst(self, date, case_id, response):
         """
@@ -126,7 +127,7 @@ class WenshuSpider(scrapy.Spider):
         sonid_list = self.cls_case.case[case_id].son_list
         if len(sonid_list) == 0:
             # 没有子案由还超过200条, 得到200条数据，输出到日志INFO
-            logging.INFO('日期: {}, 案由: {} 条件下超过200条数据')
+            logging.INFO('日期: {0}, 案由: {1} 条件下超过200条数据', date, case_id)
             for i in self.get_pages(200, response):
                 yield i
         else:
@@ -157,38 +158,46 @@ class WenshuSpider(scrapy.Spider):
                 data = self.get_request_data(date=date, case_id=case_id, page=str(i))
                 headers = self.get_request_headers()
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                         meta={'date': date},
+                                         meta={'date': date, 'case_id': response.meta['case_id']},
                                          callback=self.get_docid,  dont_filter=True)
 
     def get_docid(self, response):
         """获取一个json数据的DocId，到这里就成功啦！"""
-        html = response.text
-        try:
-            result = eval(json.loads(html))
-            runeval = result[0]['RunEval']
-            content = result[1:]
-        except:
-            print("get_docid() json解析错误或者json数据错误")
-            yield response.request.copy()
+        item = WenshuJsonItem()
+        item['json_data'] = response.text
+        yield item
 
-        for i in content:
-            casewenshuid = i.get('文书ID', '')
-            docid = self.decrypt_id(runeval, casewenshuid)
-            item = WenshuDocidItem()
-            item['docid'] = docid
-            item['judgedate'] = response.meta['date']
-            yield item
-        # 输出时间
-        #now_time = datetime.datetime.now().strftime('%H:%M:%S')
-        #print('***时间: {}'.format(now_time))
 
-    def decrypt_id(self, RunEval, id):
-        """docid解密"""
-        js = self.js_2.call("GetJs", RunEval)
-        js_objs = js.split(";;")
-        js1 = js_objs[0] + ';'
-        js2 = re.findall(r"_\[_\]\[_\]\((.*?)\)\(\);", js_objs[1])[0]
-        key = self.js_2.call("EvalKey", js1, js2)
-        key = re.findall(r"\"([0-9a-z]{32})\"", key)[0]
-        docid = self.js_2.call("DecryptDocID", key, id)
-        return docid
+
+    # def get_docid(self, response):
+    #     """获取一个json数据的DocId，到这里就成功啦！"""
+    #     html = response.text
+    #     try:
+    #         result = eval(json.loads(html))
+    #         runeval = result[0]['RunEval']
+    #         content = result[1:]
+    #     except:
+    #         print("get_docid() json解析错误或者json数据错误")
+    #         yield response.request.copy()
+    #
+    #     for i in content:
+    #         casewenshuid = i.get('文书ID', '')
+    #         docid = self.decrypt_id(runeval, casewenshuid)
+    #         item = WenshuDocidItem()
+    #         item['docid'] = docid
+    #         item['judgedate'] = response.meta['date']
+    #         yield item
+    #     # 输出时间
+    #     #now_time = datetime.datetime.now().strftime('%H:%M:%S')
+    #     #print('***时间: {}'.format(now_time))
+    #
+    # def decrypt_id(self, RunEval, id):
+    #     """docid解密"""
+    #     js = self.js_2.call("GetJs", RunEval)
+    #     js_objs = js.split(";;")
+    #     js1 = js_objs[0] + ';'
+    #     js2 = re.findall(r"_\[_\]\[_\]\((.*?)\)\(\);", js_objs[1])[0]
+    #     key = self.js_2.call("EvalKey", js1, js2)
+    #     key = re.findall(r"\"([0-9a-z]{32})\"", key)[0]
+    #     docid = self.js_2.call("DecryptDocID", key, id)
+    #     return docid

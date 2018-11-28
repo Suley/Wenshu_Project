@@ -29,7 +29,14 @@ class WenshuCaseItem(scrapy.Item):
     caseclosemethod = scrapy.Field()
     caseeffectivelevel = scrapy.Field()
 
+
 # 只要docid和裁判日期
 class WenshuDocidItem(scrapy.Item):
     docid = scrapy.Field()
     judgedate = scrapy.Field()
+
+
+# 只要json数据
+class WenshuJsonItem(scrapy.Item):
+    # 要解密的json数据
+    json_data = scrapy.Field()
