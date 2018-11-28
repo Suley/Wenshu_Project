@@ -187,26 +187,21 @@ USER_AGENTS = [
     "Mozilla/5.0 (Linux; U; Android 1.6; en-us; SonyEricssonX10i Build/R1AA056) AppleWebKit/528.5  (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
 ]
 
-# 设置开始时间，结束时间
-BEGIN_DATE = "2001-01-01"
-END_DATE = "2002-01-01"
 
-# 设置案由
-CASE = ["刑事案由", "民事案由", "行政案由", ""]
+# 设置开始时间，结束时间
+BEGIN_DATE = "2001-01-02"
+END_DATE = "2001-01-02"
+
 
 # 设置日志
 # 日志文件
 # LOG_FILE = 'wenshu.log' # 最好为爬虫名称
-LOG_FILE = BOT_NAME + '_' + time.strftime("%Y%m%d", time.localtime()) + '.log'
-
+LOG_FILE = BOT_NAME + '_' + time.strftime("%Y-%m-%d", time.localtime()) + '.log'
 # 日志等级
 LOG_LEVEL = 'INFO'
-
 # 是否启用日志（创建日志后，不需开启，进行配置）
 LOG_ENABLED = True  # （默认为True，启用日志）
-
 # 日志编码
 LOG_ENCODING = 'utf-8'
-
 # 如果是True ，进程当中，所有标准输出（包括错误）将会被重定向到log中;例如：在爬虫代码中的 print（）
 LOG_STDOUT = False  # 默认为False

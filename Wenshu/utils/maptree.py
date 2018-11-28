@@ -3,21 +3,27 @@
 """
 @author:happy_code
 @email: happy_code@foxmail.com
-@file:  maptree.py
-@time:  2018/11/26
+@file:  maptree2.py
+@time:  2018/11/27
 """
 import json
+
+
+class InnerCase(object):
+
+    def __init__(self, cid, cname, pid=None):
+        self.id = cid
+        self.name = cname
+        self.pid = pid
+        self.son_list = []
 
 
 class WenshuCase(object):
 
     def __init__(self):
-        # id -> list[son_id]
-        self.index_mp = {'#': []}
-        # id -> name
-        self.name_mp = {'#': '请选择'}
+        self.case = {'#': InnerCase('#', '请选择')}
         # 默认自动读取case.json文件
-        with open('case.json', encoding='utf-8') as f:
+        with open('Wenshu/utils/case.json', encoding='utf-8') as f:
             text = f.read()
         json_data = json.loads(text)
         for i in json_data:
@@ -29,35 +35,30 @@ class WenshuCase(object):
         :param case: 字典格式的案由
         :return: True
         """
-        id = case['id']
+        cid = case['id']
+        cname = case['name']
         pid = case['parentId']
-        name = case['name']
-        if pid in self.index_mp.keys():
-            self.index_mp[pid].append(id)
-            self.index_mp[id] = []
-            self.name_mp[id] = name
-            return True
-        else:
-            raise KeyError('pid is not existence')
+        self.case[cid] = InnerCase(cid, cname, pid)
+        self.case[pid].son_list.append(cid)
 
     def display_all_case(self):
         """
         显示所有的案由
         :return:
         """
-        self.display_case('#', None)
+        self.display_case('#')
 
-    def display_case(self, id, pid=None):
+    def display_case(self, id):
         """
         递归显示一个案由下所有子案由
         :param id: id
         :param pid: parentid,可以不写
         :return:
         """
-        l = self.index_mp[id]
-        print('id: {0}, name: {1}, pid: {2}'.format(id, self.name_mp[id], pid))
-        for i in l:
-            self.display_case(i, id)
+        cas = self.case[id]
+        print('id: {0}, name: {1}, pid: {2}'.format(id, cas.name, cas.pid))
+        for i in cas.son_list:
+            self.display_case(i)
 
 
 if __name__ == '__main__':
