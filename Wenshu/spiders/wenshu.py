@@ -112,23 +112,24 @@ class WenshuSpider(scrapy.Spider):
         # 如果数据量超过200，迭代案由
         int_count = int(count)
         if int_count > 200:
-            return self.get_case_formrequst(date, case_id, response)
+            return self.get_case_formrequst(date, case_id, count, response)
         elif int_count > 0:
                 return self.get_pages(date, case_id, count, response)
 
-    def get_case_formrequst(self, date, case_id, response):
+    def get_case_formrequst(self, date, case_id, count, response):
         """
         根据date和case_id制作一份Formrequest返回
         :param date: 日期
         :param case_id: 案由id
-        :param response: 响应
-        :return: item or FormRequest
+        :param count: 数量
+        :param response: item or request
+        :return:
         """
         sonid_list = self.cls_case.case[case_id].son_list
         if len(sonid_list) == 0:
             # 没有子案由还超过200条, 得到200条数据，输出到日志INFO
-            logging.INFO('日期: {0}, 案由: {1} 条件下超过200条数据', date, case_id)
-            for i in self.get_pages(200, response):
+            logging.info('日期: {0}, 案由: {1} 条件下数据量: {2}, 获取前200条'.format(date, case_id, count))
+            for i in self.get_pages(date=date, case_id=case_id, count=200, response=response):
                 yield i
         else:
             for cid in sonid_list:
