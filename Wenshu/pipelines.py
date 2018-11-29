@@ -6,10 +6,39 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-# 1.简单同步存储item
+# 直接存储，一行一行json数据
+import os
+
+
 class WenshuPipeline(object):
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        # 根据配置中的日期决定文件名
+        s_date = crawler.settings['BEGIN_DATE']
+        e_date = crawler.settings['END_DATE']
+        if s_date == e_date:
+            return cls(s_date)
+        else:
+            return cls(s_date + '_to_' + e_date)
+
+    def __init__(self, filename):
+        # 一个年份一个文件夹
+        year = filename[:4]
+        dirpath = './Wenshu/answer/' + year + '/'
+
+        isexists = os.path.exists(dirpath)
+        if not isexists:
+            os.makedirs(dirpath)
+
+        filename = dirpath + filename + '.txt'
+        self.f = open(file=filename, encoding='utf-8', mode='w')
+
+    def close_spider(self, spider):
+        self.f.close()
+
     def process_item(self, item, spider):
-        return item
+        self.f.write(item['json_data'] + "\n")
 
 
 # # 1.简单同步存储item
