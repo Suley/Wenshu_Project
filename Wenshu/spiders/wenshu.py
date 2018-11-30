@@ -159,13 +159,16 @@ class WenshuSpider(scrapy.Spider):
                 data = self.get_request_data(date=date, case_id=case_id, page=str(i))
                 headers = self.get_request_headers()
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                         meta={'date': date, 'case_id': response.meta['case_id']},
+                                         meta={'date': date, 'case_id': case_id},
                                          callback=self.get_docid,  dont_filter=True)
 
     def get_docid(self, response):
         """获取一个json数据的DocId，到这里就成功啦！"""
         item = WenshuJsonItem()
-        item['json_data'] = response.text
+        text = response.text
+        """ 有时候会出错 dict['文书ID'] 编程 dict['xxxID'] """
+        item['json_data'] = text
+        item['date'] = response.meta['date']
         yield item
 
 

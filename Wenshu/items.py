@@ -40,3 +40,4 @@ class WenshuDocidItem(scrapy.Item):
 class WenshuJsonItem(scrapy.Item):
     # 要解密的json数据
     json_data = scrapy.Field()
+    date = scrapy.Field()
