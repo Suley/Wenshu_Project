@@ -36,33 +36,33 @@ class GetDocId(object):
                 f.write(i + '\n')
         return len(lis)
 
-    def get_docids(self, filepath):
-        """
-        解析docid
-        :param filepath: 文件路径
-        :return:
-        """
-        f = None
-        try:
-            f = open(filepath, 'r', encoding='utf-8')
-            line = f.readline()
-            while line:
-                line = eval(json.loads(line))
-                try:
-                    runeval = line[0]['RunEval']
-                    content = line[1:]
-                    for i in content:
-                        wenshuid = i['文书ID']
-                        doc_id = self.decrypt_id(runeval, wenshuid)
-                        yield doc_id
-                except KeyError:
-                    print('KeyError')
-                line = f.readline()
-        finally:
-            if f:
-                f.close()
+    # def get_docids(self, filepath):
+    #     """
+    #     解析docid
+    #     :param filepath: 文件路径
+    #     :return:
+    #     """
+    #     f = None
+    #     try:
+    #         f = open(filepath, 'r', encoding='utf-8')
+    #         line = f.readline()
+    #         while line:
+    #             line = eval(json.loads(line))
+    #             try:
+    #                 runeval = line[0]['RunEval']
+    #                 content = line[1:]
+    #                 for i in content:
+    #                     wenshuid = i['文书ID']
+    #                     doc_id = self.decrypt_id(runeval, wenshuid)
+    #                     yield doc_id
+    #             except KeyError:
+    #                 print('KeyError')
+    #             line = f.readline()
+    #     finally:
+    #         if f:
+    #             f.close()
 
-    def get_docidss(self, filepath):
+    def get_docids(self, filepath):
         """
         解析docid
         :param filepath: 文件路径
@@ -107,10 +107,10 @@ if __name__ == '__main__':
     dirpath = '../answer/' + year + '/'
     filepath = dirpath + arg + '.txt'
 
-    cur_time = time.strftime('%Y-%m-%d, %H:%S:%M', time.localtime(time.time()))
+    cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('开始时间：' + cur_time)
     num = c.main(filepath)
     print('解析{}个完成'.format(num))
-    cur_time = time.strftime('%Y-%m-%d, %H:%S:%M', time.localtime(time.time()))
+    cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('结束时间：' + cur_time)
 
