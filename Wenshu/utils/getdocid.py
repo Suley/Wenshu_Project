@@ -8,14 +8,18 @@
 """
 
 import json
+import os
 import re
+import sys
+import time
+
 import execjs
 
 
 class GetDocId(object):
 
     def __init__(self):
-        with open('docid.js', encoding='utf-8') as f:
+        with open('../spiders/docid.js', encoding='utf-8') as f:
             jsdata_2 = f.read()
         self.js_2 = execjs.compile(jsdata_2)
 
@@ -25,11 +29,12 @@ class GetDocId(object):
         for i in self.get_docids(filepath):
             lis.append(i)
 
-        topath = filepath.split('.')[-2]
+        topath = filepath.split('.txt')[0]
         topath += '-id.txt'
         with open(topath, 'w+', encoding='utf-8') as f:
             for i in lis:
                 f.write(i + '\n')
+        return len(lis)
 
     def get_docids(self, filepath):
         """
@@ -71,4 +76,16 @@ class GetDocId(object):
 
 if __name__ == '__main__':
     c = GetDocId()
-    c.main('D:/AllCode/python/Wenshu_Project/Wenshu/answer/2001/2001-01-01.txt')
+
+    arg = sys.argv[1]
+    year = arg[:4]
+    dirpath = '../answer/' + year + '/'
+    filepath = dirpath + arg + '.txt'
+
+    cur_time = time.strftime('%Y-%m-%d, %H:%S:%M', time.localtime(time.time()))
+    print('开始时间：' + cur_time)
+    num = c.main(filepath)
+    print('解析{}个完成'.format(num))
+    cur_time = time.strftime('%Y-%m-%d, %H:%S:%M', time.localtime(time.time()))
+    print('结束时间：' + cur_time)
+
