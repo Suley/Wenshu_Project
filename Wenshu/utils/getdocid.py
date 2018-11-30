@@ -15,6 +15,8 @@ import time
 
 import execjs
 
+from Wenshu.utils.timeutils import get_between_day
+
 
 class GetDocId(object):
 
@@ -23,7 +25,7 @@ class GetDocId(object):
             jsdata_2 = f.read()
         self.js_2 = execjs.compile(jsdata_2)
 
-    def main(self, filepath):
+    def work(self, filepath):
         # 解析全部的id
         lis = []
         for i in self.get_docids(filepath):
@@ -35,6 +37,23 @@ class GetDocId(object):
             for i in lis:
                 f.write(i + '\n')
         return len(lis)
+
+    def works(self, begin_date, end_date):
+        """
+        解决一段日期的文件
+        :param begin_date:
+        :param end_date:
+        :return:
+        """
+        num = 0
+        for date in get_between_day(begin_date, end_date):
+            year = date[:4]
+            dirpath = '../answer/' + year + '/'
+            filepath = dirpath + date + '.txt'
+            temp = self.work(filepath)
+            print('日期 {0} 下文书数量: {1}'.format(date, temp))
+            num += temp
+        return num
 
     # def get_docids(self, filepath):
     #     """
@@ -102,14 +121,12 @@ class GetDocId(object):
 if __name__ == '__main__':
     c = GetDocId()
 
-    arg = sys.argv[1]
-    year = arg[:4]
-    dirpath = '../answer/' + year + '/'
-    filepath = dirpath + arg + '.txt'
+    begin_date = '2001-01-02'
+    end_date = '2001-01-05'
 
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('开始时间：' + cur_time)
-    num = c.main(filepath)
+    num = c.works(begin_date, end_date)
     print('解析{}个完成'.format(num))
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('结束时间：' + cur_time)
