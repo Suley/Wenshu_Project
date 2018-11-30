@@ -62,6 +62,31 @@ class GetDocId(object):
             if f:
                 f.close()
 
+    def get_docidss(self, filepath):
+        """
+        解析docid
+        :param filepath: 文件路径
+        :return:
+        """
+        lis = []
+        with open(filepath, 'r', encoding='utf-8') as f:
+            line = f.readline()
+            while line:
+                lis.append(line)
+                line = f.readline()
+
+        for data in lis:
+            result = eval(json.loads(data))
+            try:
+                runeval = result[0]['RunEval']
+                content = result[1:]
+                for i in content:
+                    wenshuid = i['文书ID']
+                    doc_id = self.decrypt_id(runeval, wenshuid)
+                    yield doc_id
+            except KeyError:
+                print('KeyError')
+
     def decrypt_id(self, runeval, cid):
         """docid解密"""
         js = self.js_2.call("GetJs", runeval)
