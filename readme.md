@@ -1,3 +1,6 @@
-## 学习爬虫框架
-感谢作者：Henryhaohao
-[开源项目源地址](https://github.com/Henryhaohao/Wenshu_Spider)
+## 如何运行
+1.要修改两处日期
+- Wenshu/settings.py 的 BEGIN_DATE, END_DATE  
+- Wenshu/utils/getdocid.py 的 begin_date 和 end_date
+
+2.先运行cmdline，后运行getdocid
