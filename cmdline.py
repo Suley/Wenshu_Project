@@ -7,11 +7,7 @@ __author__ = 'Henry'
 
 from scrapy import cmdline
 
-def work():
-    # execute的参数类型为一个列表
-    cmdline.execute('scrapy crawl wenshu'.split())
-
-
 # 可以加断点，右键debug运行
 if __name__ == '__main__':
-    work()
+    # execute的参数类型为一个列表
+    cmdline.execute('scrapy crawl wenshu'.split())
