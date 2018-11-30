@@ -55,32 +55,6 @@ class GetDocId(object):
             num += temp
         return num
 
-    # def get_docids(self, filepath):
-    #     """
-    #     解析docid
-    #     :param filepath: 文件路径
-    #     :return:
-    #     """
-    #     f = None
-    #     try:
-    #         f = open(filepath, 'r', encoding='utf-8')
-    #         line = f.readline()
-    #         while line:
-    #             line = eval(json.loads(line))
-    #             try:
-    #                 runeval = line[0]['RunEval']
-    #                 content = line[1:]
-    #                 for i in content:
-    #                     wenshuid = i['文书ID']
-    #                     doc_id = self.decrypt_id(runeval, wenshuid)
-    #                     yield doc_id
-    #             except KeyError:
-    #                 print('KeyError')
-    #             line = f.readline()
-    #     finally:
-    #         if f:
-    #             f.close()
-
     def get_docids(self, filepath):
         """
         解析docid
@@ -99,23 +73,30 @@ class GetDocId(object):
             try:
                 runeval = result[0]['RunEval']
                 content = result[1:]
+                cids = []
                 for i in content:
-                    wenshuid = i['文书ID']
-                    doc_id = self.decrypt_id(runeval, wenshuid)
+                    cids.append(i['文书ID'])
+                for doc_id in self.decrypt_id(runeval, cids):
                     yield doc_id
             except KeyError:
                 print('KeyError')
 
-    def decrypt_id(self, runeval, cid):
-        """docid解密"""
+    def decrypt_id(self, runeval, cids):
+        """
+        docid解密，必须传入一组json
+        :param runeval: 运行参数
+        :param cids: 待解密id列表
+        :return: docid
+        """
         js = self.js_2.call("GetJs", runeval)
         js_objs = js.split(";;")
         js1 = js_objs[0] + ';'
         js2 = re.findall(r"_\[_\]\[_\]\((.*?)\)\(\);", js_objs[1])[0]
         key = self.js_2.call("EvalKey", js1, js2)
         key = re.findall(r"\"([0-9a-z]{32})\"", key)[0]
-        docid = self.js_2.call("DecryptDocID", key, cid)
-        return docid
+
+        for cid in cids:
+            yield self.js_2.call("DecryptDocID", key, cid)
 
 
 if __name__ == '__main__':
