@@ -168,8 +168,6 @@ class WenshuSpider(scrapy.Spider):
         item = WenshuJsonItem()
         text = response.text
 
-        print(len(eval(json.loads(text))))
-
         """ 有时候会出错 dict['文书ID'] 编程 dict['xxxID'] """
         item['json_data'] = text
         item['date'] = response.meta['date']
