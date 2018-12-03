@@ -8,9 +8,7 @@
 """
 
 import json
-import os
 import re
-import sys
 import time
 
 import execjs
@@ -33,7 +31,7 @@ class GetDocId(object):
 
         topath = filepath.split('.txt')[0]
         topath += '-id.txt'
-        with open(topath, 'w+', encoding='utf-8') as f:
+        with open(topath, 'w', encoding='utf-8') as f:
             for i in lis:
                 f.write(i + '\n')
         return len(lis)
@@ -102,8 +100,8 @@ class GetDocId(object):
 if __name__ == '__main__':
     c = GetDocId()
 
-    begin_date = '2018-06-01'
-    end_date = '2018-06-30'
+    begin_date = '2001-01-01'
+    end_date = '2001-01-01'
 
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('开始时间：' + cur_time)

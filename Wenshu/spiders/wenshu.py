@@ -48,7 +48,7 @@ class WenshuSpider(scrapy.Spider):
     def get_request_data(self, date, case_id='#', page='1'):
         """
         :param date: 日期字符串，必要
-        :param case_name: 案由名字符串，不必要
+        :param case_id: 案由名字符串，不必要
         :param page: str，页数字符串，不必要
         :return: data字典
         """
@@ -60,7 +60,7 @@ class WenshuSpider(scrapy.Spider):
             # 筛选条件
             'Param': param,
             'Index': page,  # 页数
-            'Page': '10',  # 获取案件数目
+            'Page': '20',  # 获取案件数目
             'Order': '裁判日期',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
             'Direction': 'asc',  # 排序方式(1.asc:从小到大/2.desc:从大到小)
             'vl5x': self.vl5x,
@@ -148,15 +148,16 @@ class WenshuSpider(scrapy.Spider):
         :param response: 响应
         :return: item
         """
-        # 计算出请求多少页
-        page = math.ceil(int(count) / 10)  # 向上取整,每页10条
         # 第一页的数据不用请求，直接获取
         for i in self.get_docid(response):
             yield i
 
+        # 计算出请求多少页
+        page = math.ceil(int(count) / 20)  # 向上取整,每页10条
         for i in range(2, int(page) + 1):
-            if i <= 20:  # max:10*20=200 ; 20181005 -只能爬取20页,每页10条!!!!!!
-                data = self.get_request_data(date=date, case_id=case_id, page=str(i))
+
+            if i <= 10:  # 最多200条，每页20条
+                data = self.get_request_data(date=date, case_id=case_id, page=str(i))  # 请求1,3,5页，每次20条
                 headers = self.get_request_headers()
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 'case_id': case_id},
@@ -166,6 +167,9 @@ class WenshuSpider(scrapy.Spider):
         """获取一个json数据的DocId，到这里就成功啦！"""
         item = WenshuJsonItem()
         text = response.text
+
+        print(len(eval(json.loads(text))))
+
         """ 有时候会出错 dict['文书ID'] 编程 dict['xxxID'] """
         item['json_data'] = text
         item['date'] = response.meta['date']

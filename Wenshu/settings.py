@@ -185,8 +185,8 @@ USER_AGENTS = [
 
 
 # 设置开始时间，结束时间
-BEGIN_DATE = "2018-06-01"
-END_DATE = "2018-06-30"
+BEGIN_DATE = "2001-01-01"
+END_DATE = "2001-01-01"
 
 
 # 设置日志
