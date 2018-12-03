@@ -102,8 +102,8 @@ class GetDocId(object):
 if __name__ == '__main__':
     c = GetDocId()
 
-    begin_date = '2001-01-02'
-    end_date = '2001-01-05'
+    begin_date = '2018-06-01'
+    end_date = '2018-06-30'
 
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('开始时间：' + cur_time)

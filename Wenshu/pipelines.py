@@ -50,7 +50,7 @@ class WenshuPipeline(object):
             os.makedirs(dirpath)
 
         # 一个日期一个文件
-        with open(dirpath + date + '.txt', 'w+', encoding='utf-8') as f:
+        with open(dirpath + date + '.txt', 'a', encoding='utf-8') as f:
             f.write(item['json_data'] + "\n")
 
 
