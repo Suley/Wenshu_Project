@@ -114,7 +114,7 @@ class WenshuSpider(scrapy.Spider):
         if int_count > 200:
             return self.get_case_formrequst(date, case_id, count, response)
         elif int_count > 0:
-                return self.get_pages(date, case_id, count, response)
+            return self.get_pages(date, case_id, count, response)
 
     def get_case_formrequst(self, date, case_id, count, response):
         """
@@ -155,9 +155,8 @@ class WenshuSpider(scrapy.Spider):
         # 计算出请求多少页
         page = math.ceil(int(count) / 20)  # 向上取整,每页10条
         for i in range(2, int(page) + 1):
-
             if i <= 10:  # 最多200条，每页20条
-                data = self.get_request_data(date=date, case_id=case_id, page=str(i))  # 请求1,3,5页，每次20条
+                data = self.get_request_data(date=date, case_id=case_id, page=str(i))  # 每次20条
                 headers = self.get_request_headers()
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 'case_id': case_id},
