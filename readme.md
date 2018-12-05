@@ -1,17 +1,24 @@
 ## 裁判文书网爬虫项目
 
-### 暂时的效果
+### 爬虫思路
+![image](pic/基本流程图.png)
 
+### 运行效果
 #### 运行过程截图
 ![image](pic/xiaoguo.png)
 
-#### answer文件夹截图
+#### 生成文件
 ![image](pic/answer.png)
 
-#### 文件详情
+#### 本地解密过程
+![image](pic/jiemi.png)
+
+#### 解密生成文件
 ![image](pic/answer-id.png)
 
-- 现在能够根据日期和案由爬出数据，保存在Wenshu/answer下
+#### answer文件夹
+![image](pic/ans-wenjianjia.png)
+
 
 ### 运行环境
 - python3.6
