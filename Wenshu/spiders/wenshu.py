@@ -66,18 +66,12 @@ class WenshuSpider(scrapy.Spider):
         if s_type == 1:
             if s_key:
                 param += ',法院地域:{}'.format(self.region.mp[s_key].name)
-            else:
-                print('你怕是个傻逼,region_key都不传')
         elif s_type == 2:
             if s_key:
                 param += ',中级法院:{}'.format(self.court.mp[s_key].name)
-            else:
-                print('你有毛病吧,court_key都不传')
         elif s_type == 3:
             if s_key:
                 param += ',法院名称:{}'.format(self.court.mp[s_key].name)
-            else:
-                print('你有毛病吧,court_key都不传')
 
         return {
             # 筛选条件
@@ -109,10 +103,10 @@ class WenshuSpider(scrapy.Spider):
             return response.request.copy()
         # 迭代每一天
         for date in self.get_date:
-            data = self.get_request_data(date, case_id='#')
+            data = self.get_request_data(date=date)
             headers = self.get_request_headers()
             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                     meta={'date': date, 's_type': 0},
+                                     meta={'date': date, 's_type': 0, 'case_id': '#'},
                                      callback=self.get_content, dont_filter=True)
 
     def get_content(self, response):
@@ -131,25 +125,30 @@ class WenshuSpider(scrapy.Spider):
         int_count = int(count)
         if int_count <= 200:  # 小于200数据了，收割
             return self.get_pages(count, response)
-        if s_type < 3:  # 还没搜到3，继续搜
+        elif s_type < 3:  # 还没搜到3，继续搜
             return self.region_and_court_formrequest(response)
-        elif s_type == 3:  # 搜到3了
-            return self.get_pages(count, response)
-        #    return self.case_formrequsts(date, case_id, count, response)
+        elif s_type == 3:  # 搜到3,根据案由继续细分
+            return self.case_formrequsts(count, response)
 
     def show_information(self, count, response):
+        """
+        终端显示数据用
+        :param count:
+        :param response:
+        :return:
+        """
         date = response.meta['date']
         s_type = response.meta['s_type']
+        case_name = self.cls_case.case[response.meta['case_id']].name
 
         if count != '0':
-            s_name = ''
             if s_type == 0:
                 s_name = '无'
             elif s_type == 1:
                 s_name = '地域'
             elif s_type == 2:
                 s_name = '中级人民法院'
-            elif s_type == 3:
+            else:
                 s_name = '法院名称'
 
             if 's_key' in response.meta.keys():
@@ -158,32 +157,9 @@ class WenshuSpider(scrapy.Spider):
                     sss = self.region.mp[s_key].name
                 else:
                     sss = self.court.mp[s_key].name
-                print('******日期:{}, {}: {}, 数据量:{}'.format(date, s_name, sss, count))
+                print('******日期:{}, {}: {}, 案由:{} 数据量:{}'.format(date, s_name, sss, case_name, count))
             else:
-                print('******日期:{}, 数据量:{}'.format(date, count))
-
-    # def case_formrequsts(self, date, case_id, count, response):
-    #     """
-    #     根据date和case_id制作一份Formrequest返回
-    #     :param date: 日期
-    #     :param case_id: 案由id
-    #     :param count: 数量
-    #     :param response: item or request
-    #     :return:
-    #     """
-    #     sonid_list = self.cls_case.case[case_id].son_list
-    #     if len(sonid_list) == 0:
-    #         # 没有子案由还超过200条, 得到200条数据，输出到日志INFO
-    #         logging.info('日期: {0}, 案由: {1} 条件下数据量: {2}, 获取前200条'.format(date, case_id, count))
-    #         for i in self.get_pages(date=date, case_id=case_id, count=200, response=response):
-    #             yield i
-    #     else:
-    #         for cid in sonid_list:
-    #             data = self.get_request_data(date=date, case_id=cid)
-    #             headers = self.get_request_headers()
-    #             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-    #                                      meta={'date': date, 'case_id': cid},
-    #                                      callback=self.get_content, dont_filter=True)
+                print('******日期:{}, 案由:{}, 数据量:{}'.format(date, case_name, count))
 
     def region_and_court_formrequest(self, response):
         """
@@ -197,16 +173,16 @@ class WenshuSpider(scrapy.Spider):
         if s_type == 0:
 
             # 法院名称：最高人民法院
-            data = self.get_request_data(date, 3, '001000')
+            data = self.get_request_data(date=date, s_type=3, s_key='001000')
             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                     meta={'date': date, 's_type': 3, 's_key': '001000'},
+                                     meta={'date': date, 's_type': 3, 's_key': '001000', 'case_id': '#'},
                                      callback=self.get_content, dont_filter=True)
 
             # 法院地域：所有地域
             for s_key in range(1, 32):
                 data = self.get_request_data(date, 1, s_key)
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                         meta={'date': date, 's_type': 1, 's_key': s_key},
+                                         meta={'date': date, 's_type': 1, 's_key': s_key, 'case_id': '#'},
                                          callback=self.get_content, dont_filter=True)
         elif s_type < 3:
             if s_type == 1:
@@ -218,7 +194,7 @@ class WenshuSpider(scrapy.Spider):
             # 法院名称：高级or中级人民法院
             data = self.get_request_data(date, 3, court_key)
             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                     meta={'date': date, 's_type': 3, 's_key': court_key},
+                                     meta={'date': date, 's_type': 3, 's_key': court_key, 'case_id': '#'},
                                      callback=self.get_content, dont_filter=True)
 
             # 中级法院：所有辖区人民法院
@@ -226,7 +202,32 @@ class WenshuSpider(scrapy.Spider):
             for son_court_key in son_list:
                 data = self.get_request_data(date, s_type+1, son_court_key)
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                         meta={'date': date, 's_type': s_type+1, 's_key': son_court_key},
+                                         meta={'date': date, 's_type': s_type+1, 's_key': son_court_key, 'case_id': '#'},
+                                         callback=self.get_content, dont_filter=True)
+
+    def case_formrequsts(self, count, response):
+        """
+        根据date和case_id制作一份Formrequest返回
+        :param count: 数量
+        :param response: item or request
+        :return:
+        """
+        case_id = response.meta['case_id']
+        date = response.meta['date']
+        sonid_list = self.cls_case.case[case_id].son_list
+        s_type = response.meta['s_type']
+        s_key = response.meta['s_key']
+        if len(sonid_list) == 0:
+            # 没有子案由还超过200条, 得到200条数据，输出到日志INFO
+            logging.info('日期: {0}, 案由: {1}, s_key: {2} 条件下数据量: {3}, 获取前200条'.format(date, case_id, s_key, count))
+            for i in self.get_pages(200, response):
+                yield i
+        else:
+            for cid in sonid_list:
+                data = self.get_request_data(date=date, s_type=s_type, case_id=cid)
+                headers = self.get_request_headers()
+                yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
+                                         meta={'date': date, 's_type': s_type, 's_key': s_key, 'case_id': cid},
                                          callback=self.get_content, dont_filter=True)
 
     def get_pages(self, count, response):
@@ -248,6 +249,7 @@ class WenshuSpider(scrapy.Spider):
         date = response.meta['date']
         s_type = response.meta['s_type']
         s_key = response.meta['s_key']
+        case_id = response.meta['case_id']
         headers = self.get_request_headers()
         # 计算出请求多少页
         page = math.ceil(int(count) / 20)  # 向上取整,每页10条
@@ -255,7 +257,7 @@ class WenshuSpider(scrapy.Spider):
             if i <= 10:  # 最多200条，每页20条
                 data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, page=str(i))  # 每次20条
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                         meta={'date': date, 's_type': s_type, 's_key': s_key},
+                                         meta={'date': date, 's_type': s_type, 's_key': s_key, 'case_id': case_id},
                                          callback=self.get_docid,  dont_filter=True)
 
     def get_docid(self, response):
