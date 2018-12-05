@@ -224,7 +224,7 @@ class WenshuSpider(scrapy.Spider):
                 yield i
         else:
             for cid in sonid_list:
-                data = self.get_request_data(date=date, s_type=s_type, case_id=cid)
+                data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, case_id=cid)
                 headers = self.get_request_headers()
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 's_type': s_type, 's_key': s_key, 'case_id': cid},
@@ -255,7 +255,7 @@ class WenshuSpider(scrapy.Spider):
         page = math.ceil(int(count) / 20)  # 向上取整,每页10条
         for i in range(2, int(page) + 1):
             if i <= 10:  # 最多200条，每页20条
-                data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, page=str(i))  # 每次20条
+                data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, case_id=case_id, page=str(i))
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 's_type': s_type, 's_key': s_key, 'case_id': case_id},
                                          callback=self.get_docid,  dont_filter=True)
