@@ -5,19 +5,19 @@
 
 ### 运行效果
 #### 运行过程截图
-![image](pic/xiaoguo.png)
+![image](pic/caiji.png)
 
 #### 生成文件
-![image](pic/answer.png)
+![image](pic/shuju.png)
 
 #### 本地解密过程
 ![image](pic/jiemi.png)
 
 #### 解密生成文件
-![image](pic/answer-id.png)
+![image](pic/ans_shuju.png)
 
 #### answer文件夹
-![image](pic/ans-wenjianjia.png)
+![image](pic/ans_wjj.png)
 
 
 ### 运行环境
