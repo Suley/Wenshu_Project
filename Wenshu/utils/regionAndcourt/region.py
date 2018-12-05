@@ -6,7 +6,7 @@
 @file:  region.py
 @time:  2018/12/04
 """
-from diyu_search.court import Court
+from Wenshu.utils.regionAndcourt.court import Court
 
 
 class InnerRegion(object):
@@ -23,13 +23,17 @@ class Region(object):
     def __init__(self):
         self.mp = {}
         # 默认打开region.txt文件
-        with open('region.txt', 'r', encoding='utf-8') as f:
+        with open('Wenshu/utils/regionAndcourt/region.txt', 'r', encoding='utf-8') as f:
             lis = f.read().split('\n')
             for i in range(len(lis)):
                 key = i+1
                 name = lis[i]
                 ckey = '001' + ('%03d' % key) + '000'
                 self.mp[key] = InnerRegion(key, name, ckey)
+
+    def get_regions(self):
+        for i in range(1, 32):
+            yield i, self.mp[i+1].name
 
     def show_region(self, key):
         print('key: {}, name: {}, court_key: {}'.format(key, self.mp[key].name, self.mp[key].court_key))
@@ -38,13 +42,5 @@ class Region(object):
 if __name__ == '__main__':
     r = Region()
     c = Court()
-    for i in range(1, 32):
-        r.show_region(i)
-        ckey = r.mp[i].court_key
-
-        courtcls = c.mp[ckey]
-        print(courtcls.name)
-        lis = courtcls.son_keys
-        for j in lis:
-            cls = c.mp[j]
-            print(cls.name)
+    for i, j in r.get_regions():
+        print(i, j)

@@ -10,7 +10,7 @@
 import os
 
 
-BASE_PATH = './Wenshu/answer/'
+BASE_PATH = 'Wenshu/answer/'
 
 
 class WenshuPipeline(object):

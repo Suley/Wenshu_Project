@@ -23,7 +23,7 @@ class WenshuCase(object):
     def __init__(self):
         self.case = {'#': InnerCase('#', '请选择')}
         # 默认自动读取case.json文件
-        with open('Wenshu/utils/case.json', encoding='utf-8') as f:
+        with open('Wenshu/utils/case/case.json', encoding='utf-8') as f:
             text = f.read()
         json_data = json.loads(text)
         for i in json_data:

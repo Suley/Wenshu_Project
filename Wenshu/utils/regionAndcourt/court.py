@@ -23,7 +23,7 @@ class Court(object):
         self.mp = {'001000': InnerCourt('001000', '最高人民法院')}
 
         # 默认自动读取
-        with open('court.json', 'r', encoding='utf-8') as f:
+        with open('Wenshu/utils/regionAndcourt/court.json', 'r', encoding='utf-8') as f:
             dic = json.loads(f.read())
             for i in dic:
                 self.add_court(i)

@@ -4,13 +4,16 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-import time
-import urllib
 
 import execjs
 import requests
 from scrapy import signals, FormRequest
 import random
+
+
+# 代理池接口地址,可以自己搭
+PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1"
+COOKIE_URL = 'http://wenshu.court.gov.cn/list/list/?sorttype=1'
 
 
 # 随机User-Agent
@@ -32,8 +35,6 @@ class RandomUserAgentMiddleware(object):
 # 代理服务器
 class ProxyMiddleware(object):
 
-    PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1"
-
     @classmethod
     def from_crawler(cls, crawler):
         """从settings读取USER_AGENTS，传参到构造函数"""
@@ -46,7 +47,7 @@ class ProxyMiddleware(object):
     def process_request(self, request, spider):
         """处理请求request"""
         # 使用代理
-        proxy_url = requests.get(self.PROXY_SERVER).text
+        proxy_url = requests.get(PROXY_SERVER).text
         request.meta['proxy'] = 'http://' + proxy_url
 
     def process_response(self, request, response, spider):
@@ -73,9 +74,6 @@ class ProxyMiddleware(object):
 
 # 更新vjkl5的中间件
 class Vjkl5Middleware(object):
-
-    PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1"
-    COOKIE_URL = 'http://wenshu.court.gov.cn/list/list/?sorttype=1'
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -127,12 +125,12 @@ class Vjkl5Middleware(object):
         请求文书网的cookie
         :return: 返回vjkl5
         """
-        proxy_url = requests.get(self.PROXY_SERVER).text
+        proxy_url = requests.get(PROXY_SERVER).text
         # 代理
         proxies = {"http": "http://" + proxy_url}
         headers = {"User-Agent": random.choice(self.agents)}
         try:
-            res = requests.get(self.COOKIE_URL, headers=headers, proxies=proxies, timeout=8)
+            res = requests.get(COOKIE_URL, headers=headers, proxies=proxies, timeout=8)
             tp_vjkl5 = res.headers['Set-Cookie']
             tp_vjkl5 = tp_vjkl5.split(';')[0].split('=')[1]
             return tp_vjkl5
