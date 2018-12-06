@@ -59,25 +59,16 @@ class GetDocId(object):
         :param filepath: 文件路径
         :return:
         """
-        lis = []
         with open(filepath, 'r', encoding='utf-8') as f:
-            line = f.readline()
-            while line:
-                lis.append(line)
-                line = f.readline()
+            lines = f.read()
+            lis = lines.split('\n')[:-1]
 
         for data in lis:
-            result = eval(json.loads(data))
-            try:
-                runeval = result[0]['RunEval']
-                content = result[1:]
-                cids = []
-                for i in content:
-                    cids.append(i['文书ID'])
-                for doc_id in self.decrypt_id(runeval, cids):
-                    yield doc_id
-            except KeyError:
-                print('KeyError')
+            arr = data.split(',')
+            runeval = arr[0]
+            cids = arr[1:]
+            for doc_id in self.decrypt_id(runeval, cids):
+                yield doc_id
 
     def decrypt_id(self, runeval, cids):
         """
@@ -97,16 +88,19 @@ class GetDocId(object):
             yield self.js_2.call("DecryptDocID", key, cid)
 
 
-if __name__ == '__main__':
-    c = GetDocId()
+# if __name__ == '__main__':
+#     c = GetDocId()
+#
+#     begin_date = '2001-01-01'
+#     end_date = '2001-01-01'
+#
+#     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
+#     print('开始时间：' + cur_time)
+#     num = c.works(begin_date, end_date)
+#     print('解析{}个完成'.format(num))
+#     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
+#     print('结束时间：' + cur_time)
 
-    begin_date = '2001-01-01'
-    end_date = '2001-01-01'
-
-    cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
-    print('开始时间：' + cur_time)
-    num = c.works(begin_date, end_date)
-    print('解析{}个完成'.format(num))
-    cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
-    print('结束时间：' + cur_time)
-
+c =GetDocId()
+num = c.work(r'D:\AllCode\python\Wenshu_Project\Wenshu\answer\2001\2001-01-01-clean.txt')
+print(num)

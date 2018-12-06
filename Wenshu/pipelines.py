@@ -8,7 +8,7 @@
 
 # 直接存储，一行一行json数据
 import os
-
+import re
 
 BASE_PATH = 'Wenshu/answer/'
 
@@ -27,7 +27,17 @@ class WenshuPipeline(object):
 
         # 一个日期一个文件
         with open(dirpath + date + '.txt', 'a', encoding='utf-8') as f:
-            f.write(item['json_data'] + "\n")
+            f.write(self.clean_json(item['json_data']) + "\n")
+
+    def clean_json(self, text):
+        x = re.search(r'\\"RunEval\\":\\"(.*?)\\"', text)
+        x = x.group(1)
+        y = re.findall(r'\\"文书ID\\":\\"(.*?)\\"', text)
+        sss = x
+        for i in y:
+            sss += ','
+            sss += i
+        return sss
 
 
 

@@ -116,7 +116,10 @@ class WenshuSpider(scrapy.Spider):
             result = eval(json.loads(html))
             count = result[0]['Count']
         except:
+            print('--------------------------------------')
             print("get_content() json解析错误或者json数据错误")
+            self.show_information(response)
+            print('--------------------------------------')
             return response.request.copy()
 
         self.show_information(count, response)
@@ -130,7 +133,7 @@ class WenshuSpider(scrapy.Spider):
         elif s_type == 3:  # 搜到3,根据案由继续细分
             return self.case_formrequsts(count, response)
 
-    def show_information(self, count, response):
+    def show_information(self, count=0, response=None):
         """
         终端显示数据用
         :param count:
