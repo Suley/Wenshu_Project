@@ -7,12 +7,12 @@
 @time:  2018/11/29
 """
 
-import json
 import re
 import time
 
 import execjs
 
+#from timeutils import get_between_day
 from Wenshu.utils.timeutils import get_between_day
 
 
@@ -69,6 +69,8 @@ class GetDocId(object):
             cids = arr[1:]
             for doc_id in self.decrypt_id(runeval, cids):
                 yield doc_id
+            cur_t = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
+            print('***时间:{}, 解密: {}个'.format(cur_t, len(cids)))
 
     def decrypt_id(self, runeval, cids):
         """
@@ -88,19 +90,19 @@ class GetDocId(object):
             yield self.js_2.call("DecryptDocID", key, cid)
 
 
-# if __name__ == '__main__':
-#     c = GetDocId()
-#
-#     begin_date = '2001-01-01'
-#     end_date = '2001-01-01'
-#
-#     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
-#     print('开始时间：' + cur_time)
-#     num = c.works(begin_date, end_date)
-#     print('解析{}个完成'.format(num))
-#     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
-#     print('结束时间：' + cur_time)
+if __name__ == '__main__':
+    c = GetDocId()
 
-c =GetDocId()
-num = c.work(r'D:\AllCode\python\Wenshu_Project\Wenshu\answer\2001\2001-01-01-clean.txt')
-print(num)
+    begin_date = '2001-01-02'
+    end_date = '2001-01-02'
+
+    cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
+    print('开始时间：' + cur_time)
+    num = c.works(begin_date, end_date)
+    print('解析{}个完成'.format(num))
+    cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
+    print('结束时间：' + cur_time)
+
+# c =GetDocId()
+# num = c.work(r'D:\AllCode\python\Wenshu_Project\Wenshu\answer\2001\2001-01-01-clean.txt')
+# print(num)

@@ -39,15 +39,12 @@ class WenshuSpider(scrapy.Spider):
 
         with open('Wenshu/spiders/get_vl5x.js', encoding='utf-8') as f:
             jsdata_1 = f.read()
-        with open('Wenshu/spiders/docid.js', encoding='utf-8') as f:
-            jsdata_2 = f.read()
         self.js_1 = execjs.compile(jsdata_1)
-        self.js_2 = execjs.compile(jsdata_2)
         self.guid = '5969ecb9-eabf-2fac9283-6d278d8fda1b'
         self.vjkl5 = None
         self.vl5x = None
 
-    def get_request_data(self, date, s_type=0, s_key=None, case_id='#', page='1'):
+    def get_request_data(self, date, s_type, s_key=None, case_id='#', page='1'):
         """
         准备请求参数
         :param date: 裁判日期
@@ -103,10 +100,10 @@ class WenshuSpider(scrapy.Spider):
             return response.request.copy()
         # 迭代每一天
         for date in self.get_date:
-            data = self.get_request_data(date=date)
+            data = self.get_request_data(date=date, s_type=0)
             headers = self.get_request_headers()
             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
-                                     meta={'date': date, 's_type': 0, 'case_id': '#'},
+                                     meta={'date': date, 's_type': 0, 's_key': '0', 'case_id': '#'},
                                      callback=self.get_content, dont_filter=True)
 
     def get_content(self, response):
@@ -142,6 +139,7 @@ class WenshuSpider(scrapy.Spider):
         """
         date = response.meta['date']
         s_type = response.meta['s_type']
+        s_key = response.meta['s_key']
         case_name = self.cls_case.case[response.meta['case_id']].name
 
         if count != '0':
@@ -154,8 +152,7 @@ class WenshuSpider(scrapy.Spider):
             else:
                 s_name = '法院名称'
 
-            if 's_key' in response.meta.keys():
-                s_key = response.meta['s_key']
+            if s_key != '0':
                 if s_type == 1:
                     sss = self.region.mp[s_key].name
                 else:
@@ -183,7 +180,7 @@ class WenshuSpider(scrapy.Spider):
 
             # 法院地域：所有地域
             for s_key in range(1, 32):
-                data = self.get_request_data(date, 1, s_key)
+                data = self.get_request_data(date=date, s_type=1, s_key=s_key)
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 's_type': 1, 's_key': s_key, 'case_id': '#'},
                                          callback=self.get_content, dont_filter=True)
@@ -195,7 +192,7 @@ class WenshuSpider(scrapy.Spider):
                 court_key = response.meta['s_key']
 
             # 法院名称：高级or中级人民法院
-            data = self.get_request_data(date, 3, court_key)
+            data = self.get_request_data(date=date, s_type=3, s_key=court_key)
             yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                      meta={'date': date, 's_type': 3, 's_key': court_key, 'case_id': '#'},
                                      callback=self.get_content, dont_filter=True)
@@ -203,7 +200,7 @@ class WenshuSpider(scrapy.Spider):
             # 中级法院：所有辖区人民法院
             son_list = self.court.get_son_keys(court_key)
             for son_court_key in son_list:
-                data = self.get_request_data(date, s_type+1, son_court_key)
+                data = self.get_request_data(date=date, s_type=s_type+1, s_key=son_court_key)
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 's_type': s_type+1, 's_key': son_court_key, 'case_id': '#'},
                                          callback=self.get_content, dont_filter=True)
@@ -246,24 +243,24 @@ class WenshuSpider(scrapy.Spider):
             return
 
         # 第一页的数据不用请求，直接获取
-        for i in self.get_docid(response):
+        for i in self.get_json(response):
             yield i
 
         date = response.meta['date']
         s_type = response.meta['s_type']
         s_key = response.meta['s_key']
         case_id = response.meta['case_id']
-        headers = self.get_request_headers()
         # 计算出请求多少页
         page = math.ceil(int(count) / 20)  # 向上取整,每页10条
         for i in range(2, int(page) + 1):
             if i <= 10:  # 最多200条，每页20条
+                headers = self.get_request_headers()
                 data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, case_id=case_id, page=str(i))
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
                                          meta={'date': date, 's_type': s_type, 's_key': s_key, 'case_id': case_id},
-                                         callback=self.get_docid,  dont_filter=True)
+                                         callback=self.get_json,  dont_filter=True)
 
-    def get_docid(self, response):
+    def get_json(self, response):
         """获取一个json数据，到这里就成功啦！"""
         item = WenshuJsonItem()
         text = response.text
