@@ -12,7 +12,7 @@ import time
 
 import execjs
 
-#from timeutils import get_between_day
+# from timeutils import get_between_day
 from Wenshu.utils.timeutils import get_between_day
 
 
@@ -34,6 +34,7 @@ class GetDocId(object):
         with open(topath, 'w', encoding='utf-8') as f:
             for i in lis:
                 f.write(i + '\n')
+        print("解析文件 {} 完成, 共 {} 个.".format(filepath, len(lis)))
         return len(lis)
 
     def works(self, begin_date, end_date):
@@ -69,6 +70,8 @@ class GetDocId(object):
             cids = arr[1:]
             for doc_id in self.decrypt_id(runeval, cids):
                 yield doc_id
+            cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
+            print("时间: {}, 解析: {}个".format(cur_time, len(cids)))
 
     def decrypt_id(self, runeval, cids):
         """
@@ -91,13 +94,13 @@ class GetDocId(object):
 if __name__ == '__main__':
     c = GetDocId()
 
-    begin_date = '2010-05-10'
-    end_date = '2010-05-10'
+    begin_date = '2018-07-12'
+    end_date = '2018-07-12'
 
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
-    print('开始时间：' + cur_time)
     num = c.works(begin_date, end_date)
-    print('解析{}个完成'.format(num))
+    print('开始时间：' + cur_time)
+    print('******解析总数: {}'.format(num))
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('结束时间：' + cur_time)
 
