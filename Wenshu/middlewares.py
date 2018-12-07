@@ -12,7 +12,7 @@ import random
 
 
 # 代理池接口地址,可以自己搭
-PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1"
+PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1000"
 COOKIE_URL = 'http://wenshu.court.gov.cn/list/list/?sorttype=1'
 
 
@@ -35,20 +35,20 @@ class RandomUserAgentMiddleware(object):
 # 代理服务器
 class ProxyMiddleware(object):
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        """从settings读取USER_AGENTS，传参到构造函数"""
-        return cls(crawler.settings.getlist('USER_AGENTS'))
-
-    def __init__(self, agents):
+    def __init__(self):
         """准备连接动态代理的基本信息"""
-        self.agents = agents
+        self.num = 0
+        self.proxys = requests.get(PROXY_SERVER).text.split(',')
 
     def process_request(self, request, spider):
         """处理请求request"""
-        # 使用代理
-        proxy_url = requests.get(PROXY_SERVER).text
-        request.meta['proxy'] = 'http://' + proxy_url
+
+        if self.num > 700:
+            self.proxys = requests.get(PROXY_SERVER).text.split(',')
+            self.num = 0
+
+        request.meta['proxy'] = 'http://' + self.proxys[self.num]
+        self.num += 1
 
     def process_response(self, request, response, spider):
         """处理返回的response"""
