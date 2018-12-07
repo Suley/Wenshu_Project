@@ -112,12 +112,8 @@ class WenshuSpider(scrapy.Spider):
         try:  # 可能为 "[]"
             result = eval(json.loads(html))
             count = result[0]['Count']
-        except LookupError:
-            print('--------------------------------------')
-            print("get_content() json解析错误或者json数据错误")
-            print(type(response))
-            print(type(response.request))
-            print('----------------------&----------------')
+        except:
+            print("get_content() 异常")
             return response.request.copy()
 
         self.show_information(count, response)
