@@ -17,11 +17,11 @@ NEWSPIDER_MODULE = 'Wenshu.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'Wenshu (+http://www.yourdomain.com)'
+# USER_AGENT = 'Wenshu (+http://www.yourdomain.com)'
 
 # 请求失败重试
-RETRY_ENABLED = True #是否开启retry
-RETRY_TIMES = 3  #重试次数
+RETRY_ENABLED = True # 是否开启retry
+RETRY_TIMES = 3  # 重试次数
 # RETRY_HTTP_CODECS  #遇到什么http code时需要重试，默认是500,502,503,504,408，其他的，网络连接超时等问题也会自动retry的
 
 # 中断后继续执行
@@ -47,7 +47,7 @@ DNSCACHE_ENABLED = True
 # 下载延迟
 DOWNLOAD_DELAY = 0  # scrapy的并发请求，只有在delay=0时才能实现;心疼服务器的可以加点延迟~
 # 下载超时
-DOWNLOAD_TIMEOUT = 8  # 减小下载超时能让卡住的连接能被快速的放弃并解放处理其他站点的能力,默认15秒
+DOWNLOAD_TIMEOUT = 10  # 减小下载超时能让卡住的连接能被快速的放弃并解放处理其他站点的能力,默认15秒
 # 但是减小下载超时可能会引发错误:
 # TimeoutError: User timeout caused connection failure: Getting http://xxx.com. took longer than 15.0 seconds.
 
@@ -185,8 +185,8 @@ USER_AGENTS = [
 
 
 # 设置开始时间，结束时间
-BEGIN_DATE = "2010-05-10"
-END_DATE = "2010-05-10"
+BEGIN_DATE = "2018-07-12"
+END_DATE = "2018-07-12"
 
 
 # 设置日志

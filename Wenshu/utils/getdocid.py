@@ -69,8 +69,6 @@ class GetDocId(object):
             cids = arr[1:]
             for doc_id in self.decrypt_id(runeval, cids):
                 yield doc_id
-            cur_t = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
-            print('***时间:{}, 解密: {}个'.format(cur_t, len(cids)))
 
     def decrypt_id(self, runeval, cids):
         """
@@ -93,8 +91,8 @@ class GetDocId(object):
 if __name__ == '__main__':
     c = GetDocId()
 
-    begin_date = '2001-01-02'
-    end_date = '2001-01-02'
+    begin_date = '2010-05-10'
+    end_date = '2010-05-10'
 
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('开始时间：' + cur_time)

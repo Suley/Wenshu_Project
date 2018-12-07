@@ -95,8 +95,8 @@ class WenshuSpider(scrapy.Spider):
             self.vjkl5 = response.headers['Set-Cookie'].decode('utf-8')
             self.vjkl5 = self.vjkl5.split(';')[0].split('=')[1]
             self.vl5x = self.js_1.call('getvl5x', self.vjkl5)
-        except:
-            print("parse() 获取cookie错误")
+        except LookupError:
+            print("parse() 获取cookie错误,重新获取")
             return response.request.copy()
         # 迭代每一天
         for date in self.get_date:
@@ -109,13 +109,14 @@ class WenshuSpider(scrapy.Spider):
     def get_content(self, response):
         """获取检索出来的案件的 json数据"""
         html = response.text
-        try:
+        try:  # 可能为 "[]"
             result = eval(json.loads(html))
             count = result[0]['Count']
-        except:
+        except LookupError:
             print('--------------------------------------')
             print("get_content() json解析错误或者json数据错误")
-            self.show_information(response)
+            print(type(response))
+            print(type(response.request))
             print('--------------------------------------')
             return response.request.copy()
 
@@ -262,12 +263,16 @@ class WenshuSpider(scrapy.Spider):
 
     def get_json(self, response):
         """获取一个json数据，到这里就成功啦！"""
-        item = WenshuJsonItem()
         text = response.text
+        if text == "[]":
+            return response.request.copy()
+
+        item = WenshuJsonItem()
 
         """ 有时候会出错 dict['文书ID'] 编程 dict['xxxID'] """
         item['json_data'] = text
         item['date'] = response.meta['date']
+
         yield item
 
 
