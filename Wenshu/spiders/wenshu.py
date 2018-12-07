@@ -117,7 +117,7 @@ class WenshuSpider(scrapy.Spider):
             print("get_content() json解析错误或者json数据错误")
             print(type(response))
             print(type(response.request))
-            print('--------------------------------------')
+            print('----------------------&----------------')
             return response.request.copy()
 
         self.show_information(count, response)
@@ -264,7 +264,7 @@ class WenshuSpider(scrapy.Spider):
     def get_json(self, response):
         """获取一个json数据，到这里就成功啦！"""
         text = response.text
-        if text == "[]":
+        if text == '"[]"':
             return response.request.copy()
 
         item = WenshuJsonItem()

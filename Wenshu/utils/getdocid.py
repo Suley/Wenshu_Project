@@ -103,7 +103,3 @@ if __name__ == '__main__':
     print('******解析总数: {}'.format(num))
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     print('结束时间：' + cur_time)
-
-# c =GetDocId()
-# num = c.work(r'D:\AllCode\python\Wenshu_Project\Wenshu\answer\2001\2001-01-01-clean.txt')
-# print(num)
