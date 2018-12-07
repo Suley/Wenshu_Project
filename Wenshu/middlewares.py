@@ -12,7 +12,8 @@ import random
 
 
 # 代理池接口地址,可以自己搭
-PROXY_SERVER = "http://172.19.105.82:8887/resouce/getproxy?num=1000"
+PROXY_SERVER_one = "http://172.19.105.82:8887/resouce/getproxy?num=1"
+PROXY_SERVER_1000 = "http://172.19.105.82:8887/resouce/getproxy?num=1000"
 COOKIE_URL = 'http://wenshu.court.gov.cn/list/list/?sorttype=1'
 
 
@@ -38,13 +39,13 @@ class ProxyMiddleware(object):
     def __init__(self):
         """准备连接动态代理的基本信息"""
         self.num = 0
-        self.proxys = requests.get(PROXY_SERVER).text.split(',')
+        self.proxys = requests.get(PROXY_SERVER_1000).text.split(',')
 
     def process_request(self, request, spider):
         """处理请求request"""
 
         if self.num > 700:
-            self.proxys = requests.get(PROXY_SERVER).text.split(',')
+            self.proxys = requests.get(PROXY_SERVER_1000).text.split(',')
             self.num = 0
 
         request.meta['proxy'] = 'http://' + self.proxys[self.num]
@@ -126,7 +127,7 @@ class Vjkl5Middleware(object):
         请求文书网的cookie
         :return: 返回vjkl5
         """
-        proxy_url = requests.get(PROXY_SERVER).text
+        proxy_url = requests.get(PROXY_SERVER_one).text
         # 代理
         proxies = {"http": "http://" + proxy_url}
         headers = {"User-Agent": random.choice(self.agents)}
