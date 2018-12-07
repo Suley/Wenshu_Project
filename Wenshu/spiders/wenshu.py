@@ -113,8 +113,7 @@ class WenshuSpider(scrapy.Spider):
             result = eval(json.loads(html))
             count = result[0]['Count']
         except:
-            print("get_content() 异常")
-            return response.request.copy()
+            return self.error_req(response)
 
         self.show_information(count, response)
 
@@ -126,6 +125,18 @@ class WenshuSpider(scrapy.Spider):
             return self.region_and_court_formrequest(response)
         elif s_type == 3:  # 搜到3,根据案由继续细分
             return self.case_formrequsts(count, response)
+
+    def error_req(self, response):
+        req = response.request.copy()
+        if 'error_time' in req.meta.keys():
+            error_time = req.meta['error_time']
+            error_time += 1
+            if error_time > 3:  # 错误报文重试3次
+                return None
+        else:
+            req.meta['error_time'] = 1
+        print("response异常次数:{}".format(req.meta['error_time']))
+        return req
 
     def show_information(self, count=0, response=None):
         """

@@ -94,7 +94,7 @@ class Vjkl5Middleware(object):
     def process_request(self, request, spider):
         """修改vjkl5"""
         self.num += 1
-        if self.num > 600:
+        if self.num > 800:
             # 重试3次
             tp_vjkl5 = None
             for i in range(3):
