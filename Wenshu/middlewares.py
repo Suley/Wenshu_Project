@@ -93,7 +93,7 @@ class Vjkl5Middleware(object):
     def process_request(self, request, spider):
         """修改vjkl5"""
         self.num += 1
-        if self.num % 200 == 0:
+        if self.num > 600:
             # 重试3次
             tp_vjkl5 = None
             for i in range(3):
@@ -109,6 +109,7 @@ class Vjkl5Middleware(object):
                 print("***新的vlx5:" + self.vl5x)
             else:
                 print("***更新vlx5失败")
+            self.num = 0
 
         # FormRequest的修改form表单需要编码
         if self.vjkl5 is not None and type(request) == FormRequest:
