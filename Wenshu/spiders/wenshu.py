@@ -127,16 +127,14 @@ class WenshuSpider(scrapy.Spider):
             return self.case_formrequsts(count, response)
 
     def error_req(self, response):
-        req = response.request.copy()
-        if 'error_time' in req.meta.keys():
-            error_time = req.meta['error_time']
-            error_time += 1
-            if error_time > 3:  # 错误报文重试3次
-                return None
+        if 'error' not in response.meta.keys():
+            response.meta['error_times'] = 1
         else:
-            req.meta['error_time'] = 1
-        print("response异常次数:{}".format(req.meta['error_time']))
-        return req
+            response.meta['error_times'] = response.meta['error_times'] + 1
+            if response.meta['error_times'] > 3:
+                return None
+        print("response异常次数:{}".format(response.meta['error_times']))
+        return response.request.copy()
 
     def show_information(self, count=0, response=None):
         """
