@@ -97,7 +97,7 @@ class WenshuSpider(scrapy.Spider):
             self.vl5x = self.js_1.call('getvl5x', self.vjkl5)
         except LookupError:
             print("parse() 获取cookie错误,重新获取")
-            return response.request.copy()
+            return self.error_req(response)
         # 迭代每一天
         for date in self.get_date:
             data = self.get_request_data(date=date, s_type=0)
@@ -127,7 +127,12 @@ class WenshuSpider(scrapy.Spider):
             return self.case_formrequsts(count, response)
 
     def error_req(self, response):
-        if 'error' not in response.meta.keys():
+        """
+        错误报文
+        :param response:
+        :return: error_times 计数重发
+        """
+        if 'error_times' not in response.meta.keys():
             response.meta['error_times'] = 1
         else:
             response.meta['error_times'] = response.meta['error_times'] + 1
@@ -270,7 +275,7 @@ class WenshuSpider(scrapy.Spider):
         """获取一个json数据，到这里就成功啦！"""
         text = response.text
         if text == '"[]"':
-            return response.request.copy()
+            return self.error_req(response)
 
         item = WenshuJsonItem()
 

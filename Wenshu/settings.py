@@ -32,7 +32,7 @@ ROBOTSTXT_OBEY = False
 
 # 设置参数教程:https://blog.csdn.net/q_an1314/article/details/51245011
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 200  # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
+CONCURRENT_REQUESTS = 250  # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
 CONCURRENT_REQUESTS_PER_DOMAIN = 10000
 # CONCURRENT_REQUESTS_PER_SPIDER = 30  # 线程数
 # CONCURRENT_REQUESTS_PER_DOMAIN = 100  # 任何单个域执行的并发（即同时）请求的最大数量
@@ -187,7 +187,7 @@ USER_AGENTS = [
 
 # 设置开始时间，结束时间
 BEGIN_DATE = "2012-01-01"
-END_DATE = "2012-12-31"
+END_DATE = "2012-01-01"
 
 
 # 设置日志
