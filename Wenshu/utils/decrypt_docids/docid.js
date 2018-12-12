@@ -1756,3 +1756,10 @@ function DecryptDocID(key, id){
     var realid = com.str.Decrypt(unzipid);
     return realid;
 }
+
+
+module.exports={
+    GetJs:GetJs,
+    EvalKey:EvalKey,
+    DecryptDocID:DecryptDocID
+}

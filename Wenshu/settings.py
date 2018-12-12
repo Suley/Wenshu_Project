@@ -186,13 +186,12 @@ USER_AGENTS = [
 
 
 # 设置开始时间，结束时间
-BEGIN_DATE = "2012-01-01"
-END_DATE = "2012-01-01"
+BEGIN_DATE = "2018-01-01"
+END_DATE = "2018-12-09"
 
 
 # 设置日志
 # 日志文件
-# LOG_FILE = 'wenshu.log' # 最好为爬虫名称
 LOG_FILE = BOT_NAME + '_' + time.strftime("%Y-%m-%d", time.localtime()) + '.log'
 # 日志等级
 LOG_LEVEL = 'INFO'
