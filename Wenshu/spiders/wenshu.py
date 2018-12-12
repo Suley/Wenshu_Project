@@ -264,7 +264,7 @@ class WenshuSpider(scrapy.Spider):
         # 计算出请求多少页
         page = math.ceil(int(count) / 20)  # 向上取整,每页20条
         for i in range(2, int(page) + 1):
-            if i <= 10:  # 最多400条，每页20条
+            if i <= 10:  # 最多200条，每页20条
                 headers = self.get_request_headers()
                 data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, case_id=case_id, page=str(i))
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
