@@ -7,15 +7,14 @@
 @time:  2018/12/12
 """
 import re
+import sys
 
 from Wenshu.utils import timeutils
 
-BEGIN_DATE = '2012-01-01'
-ENDED_DATE = '2012-12-31'
+BEGIN_DATE = '2001-01-01'
+ENDED_DATE = '2001-01-01'
 
 FILE_RELA_PATH = '../../answer/'
-# Wenshu/answer/2012/2012-01-01.txt
-# Wenshu/answer/2012/2012-01-01.txt
 
 
 class CountAll(object):
@@ -47,5 +46,15 @@ class CountAll(object):
 
 
 if __name__ == '__main__':
-    c = CountAll()
-    c.count()
+    try:
+        year = sys.argv[1]
+        b_date = year + '-01-01'
+        e_date = year + '-12-31'
+        c = CountAll(b_date, e_date)
+        c.count()
+    except IndexError:
+        c = CountAll()
+        c.count()
+
+
+

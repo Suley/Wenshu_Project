@@ -7,7 +7,7 @@
 @time:  2018/12/05
 """
 
-with open(r'D:\AllCode\python\Wenshu_Project\Wenshu\answer\2010\2010-05-10-id.txt', 'r', encoding='utf-8') as f:
+with open(r'D:\AllCode\python\Wenshu_Project\Wenshu\answer\2001\2001-01-01-id.txt', 'r', encoding='utf-8') as f:
     tx = f.read()
 
 lis = tx.split('\n')[:-1]

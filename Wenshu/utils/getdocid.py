@@ -94,8 +94,8 @@ class GetDocId(object):
 if __name__ == '__main__':
     c = GetDocId()
 
-    begin_date = '2018-07-12'
-    end_date = '2018-07-12'
+    begin_date = '2001-01-01'
+    end_date = '2001-01-01'
 
     cur_time = time.strftime('%Y-%m-%d, %H:%M:%S', time.localtime(time.time()))
     num = c.works(begin_date, end_date)

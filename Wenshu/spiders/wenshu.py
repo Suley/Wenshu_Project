@@ -28,11 +28,11 @@ class WenshuSpider(scrapy.Spider):
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         # 获取开始时间，结束时间
-        return cls(begin_date=crawler.settings.get("BEGIN_DATE"), end_date=crawler.settings.get("END_DATE"))
+        return cls(b_date=crawler.settings.get("BEGIN_DATE"), e_date=crawler.settings.get("END_DATE"))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.get_date = get_between_day(kwargs["begin_date"], kwargs["end_date"])  # 获取日期的迭代器
+        self.get_date = get_between_day(kwargs["b_date"], kwargs["e_date"])  # 获取日期的迭代器
         self.cls_case = WenshuCase()  # 案由类
         self.region = Region()  # 地域类
         self.court = Court()  # 法院类
@@ -40,6 +40,7 @@ class WenshuSpider(scrapy.Spider):
         with open('Wenshu/spiders/get_vl5x.js', encoding='utf-8') as f:
             jsdata_1 = f.read()
         self.js_1 = execjs.compile(jsdata_1)
+
         self.guid = '5969ecb9-eabf-2fac9283-6d278d8fda1b'
         self.vjkl5 = None
         self.vl5x = None
@@ -52,6 +53,7 @@ class WenshuSpider(scrapy.Spider):
         :param s_key: 地域key or 法院key,默认为空
         :param case_id:  案由id, 默认没有
         :param page:  页数str '1' - '10'
+        :param direc: 排序方式
         :return: dict
         """
         param = ''
@@ -75,7 +77,7 @@ class WenshuSpider(scrapy.Spider):
             'Param': param,
             'Index': page,  # 页数
             'Page': '20',  # 获取案件数目
-            'Order': '裁判日期',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
+            'Order': '审判程序',  # 排序类型(1.法院层级/2.裁判日期/3.审判程序)
             'Direction': 'asc',  # 排序方式(1.asc:从小到大/2.desc:从大到小)
             'vl5x': self.vl5x,
             'number': 'wens',
@@ -244,8 +246,6 @@ class WenshuSpider(scrapy.Spider):
     def get_pages(self, count, response):
         """
         获取不超过200条数据
-        :param date: 日期
-        :param case_id: 案由id
         :param count: 总数
         :param response: 响应
         :return: item
@@ -262,9 +262,9 @@ class WenshuSpider(scrapy.Spider):
         s_key = response.meta['s_key']
         case_id = response.meta['case_id']
         # 计算出请求多少页
-        page = math.ceil(int(count) / 20)  # 向上取整,每页10条
+        page = math.ceil(int(count) / 20)  # 向上取整,每页20条
         for i in range(2, int(page) + 1):
-            if i <= 10:  # 最多200条，每页20条
+            if i <= 10:  # 最多400条，每页20条
                 headers = self.get_request_headers()
                 data = self.get_request_data(date=date, s_type=s_type, s_key=s_key, case_id=case_id, page=str(i))
                 yield scrapy.FormRequest(url=self.LIST_URL, headers=headers, formdata=data,
@@ -272,25 +272,16 @@ class WenshuSpider(scrapy.Spider):
                                          callback=self.get_json,  dont_filter=True)
 
     def get_json(self, response):
-        """获取一个json数据，到这里就成功啦！"""
+        """获取一个json数据"""
         text = response.text
+        # 特判貌似不怎么好
         if text == '"[]"':
             return self.error_req(response)
 
         item = WenshuJsonItem()
-
-        """ 有时候会出错 dict['文书ID'] 编程 dict['xxxID'] """
         item['json_data'] = text
         item['date'] = response.meta['date']
-
         yield item
-
-
-
-
-
-
-
 
     # def get_docid(self, response):
     #     """获取一个json数据的DocId，到这里就成功啦！"""
