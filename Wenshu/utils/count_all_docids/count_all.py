@@ -6,10 +6,9 @@
 @file:  count_all.py
 @time:  2018/12/12
 """
+import datetime
 import re
 import sys
-
-from Wenshu.utils import timeutils
 
 BEGIN_DATE = '2001-01-01'
 ENDED_DATE = '2001-01-01'
@@ -25,9 +24,17 @@ class CountAll(object):
         self.rela_path = rela_path
         self.num = 0
 
+    def get_between_day(self, b_date, e_date):
+        begin_date = datetime.datetime.strptime(b_date, "%Y-%m-%d")
+        end_date = datetime.datetime.strptime(e_date, "%Y-%m-%d")
+        while begin_date <= end_date:
+            date_str = begin_date.strftime("%Y-%m-%d")
+            begin_date += datetime.timedelta(days=1)
+            yield date_str
+
     def count(self):
 
-        for date in timeutils.get_between_day(self.b_date, self.e_date):
+        for date in self.get_between_day(self.b_date, self.e_date):
             filename = date + '.txt'
             tp_num = self.count_file(filename)
             self.num += tp_num

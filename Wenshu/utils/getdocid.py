@@ -12,8 +12,7 @@ import time
 
 import execjs
 
-# from timeutils import get_between_day
-from Wenshu.utils.timeutils import get_between_day
+from Wenshu.utils.timeutils import TimeUtils
 
 
 class GetDocId(object):
@@ -45,7 +44,7 @@ class GetDocId(object):
         :return:
         """
         num = 0
-        for date in get_between_day(begin_date, end_date):
+        for date in TimeUtils.get_between_day(begin_date, end_date):
             year = date[:4]
             dirpath = '../answer/' + year + '/'
             filepath = dirpath + date + '.txt'
