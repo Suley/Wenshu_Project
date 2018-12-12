@@ -7,11 +7,12 @@
 @time:  2018/12/12
 """
 import datetime
+import os
 import re
 import sys
 
 BEGIN_DATE = '2001-01-01'
-ENDED_DATE = '2001-01-01'
+ENDED_DATE = '2011-12-31'
 
 FILE_RELA_PATH = '../../answer/'
 
@@ -22,6 +23,7 @@ class CountAll(object):
         self.b_date = b_date
         self.e_date = e_date
         self.rela_path = rela_path
+        self.pattern = re.compile(',')
         self.num = 0
 
     def get_between_day(self, b_date, e_date):
@@ -47,9 +49,13 @@ class CountAll(object):
         year = filename[:4]
         dirpath = self.rela_path + year + '/'
 
+        if not os.path.exists(dirpath+filename):
+            return 0
+
         with open(dirpath + filename, 'r', encoding='utf-8') as f:
             text = f.read()
-        return len(re.findall(',', text))
+
+        return len(self.pattern.findall(text))
 
 
 if __name__ == '__main__':

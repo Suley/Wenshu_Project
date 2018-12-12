@@ -32,7 +32,7 @@ class WenshuPipeline(object):
     def clean_json(self, text):
         x = re.search(r'\\"RunEval\\":\\"(.*?)\\"', text)
         x = x.group(1)
-        y = re.findall(r'\\"文书ID\\":\\"(.*?)\\"', text)
+        y = re.findall(r'\\".*?ID\\":\\"(.*?)\\"', text)
         sss = x
         for i in y:
             sss += ','
