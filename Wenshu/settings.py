@@ -32,7 +32,7 @@ ROBOTSTXT_OBEY = False
 
 # 设置参数教程:https://blog.csdn.net/q_an1314/article/details/51245011
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 300  # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
+CONCURRENT_REQUESTS = 50  # 由Scrapy下载程序执行的并发（即同时）请求的最大数量(选择一个能使CPU占用率在80%-90%的并发数)
 CONCURRENT_REQUESTS_PER_DOMAIN = 100000
 # CONCURRENT_REQUESTS_PER_IP = 0  # 任何单个IP执行的并发（即同时）请求的最大数量 ; 默认值（0），这样就禁用了对每个IP的限制
 
@@ -50,9 +50,6 @@ DOWNLOAD_TIMEOUT = 10  # 减小下载超时能让卡住的连接能被快速的�
 # 但是减小下载超时可能会引发错误:
 # TimeoutError: User timeout caused connection failure: Getting http://xxx.com. took longer than 15.0 seconds.
 
-# The download delay setting will honor only one of:
-#CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False

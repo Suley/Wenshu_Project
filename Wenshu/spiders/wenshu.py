@@ -15,7 +15,7 @@ from Wenshu.items import WenshuJsonItem
 from Wenshu.utils.case.maptree import WenshuCase
 from Wenshu.utils.regionAndcourt.court import Court
 from Wenshu.utils.regionAndcourt.region import Region
-from Wenshu.utils.timeutils import get_between_day
+from Wenshu.utils.timeutils import TimeUtils
 
 
 class WenshuSpider(scrapy.Spider):
@@ -32,7 +32,7 @@ class WenshuSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.get_date = get_between_day(kwargs["b_date"], kwargs["e_date"])  # 获取日期的迭代器
+        self.get_date = TimeUtils.get_between_day(kwargs["b_date"], kwargs["e_date"])  # 获取日期的迭代器
         self.cls_case = WenshuCase()  # 案由类
         self.region = Region()  # 地域类
         self.court = Court()  # 法院类
@@ -282,6 +282,9 @@ class WenshuSpider(scrapy.Spider):
         item['json_data'] = text
         item['date'] = response.meta['date']
         yield item
+
+
+
 
     # def get_docid(self, response):
     #     """获取一个json数据的DocId，到这里就成功啦！"""
