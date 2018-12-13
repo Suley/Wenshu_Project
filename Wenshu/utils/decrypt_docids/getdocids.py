@@ -6,13 +6,12 @@
 @file:  getdocid.py
 @time:  2018/11/29
 """
+import datetime
 import os
 import sys
 import time
 
 import execjs
-
-from Wenshu.utils.timeutils import TimeUtils
 
 
 BEGIN_DATE = '2001-01-01'
@@ -20,6 +19,23 @@ ENDED_DATE = '2001-01-01'
 
 
 FILE_RELA_PATH = '../../answer/'
+
+
+class TimeUtils(object):
+    @staticmethod
+    def get_between_day(b_date, e_date):
+        """
+        获取区间每一天的生成器
+        :param begin_date: str 开始日期
+        :param end_date: str 结束日期，默认为当前日期
+        :return: str
+        """
+        b_date = datetime.datetime.strptime(b_date, "%Y-%m-%d")
+        e_date = datetime.datetime.strptime(e_date, "%Y-%m-%d")
+        while b_date <= e_date:
+            date_str = b_date.strftime("%Y-%m-%d")
+            b_date += datetime.timedelta(days=1)
+            yield date_str
 
 
 class GetDocId(object):

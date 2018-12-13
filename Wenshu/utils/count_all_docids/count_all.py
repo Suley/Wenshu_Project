@@ -17,6 +17,23 @@ ENDED_DATE = '2011-12-31'
 FILE_RELA_PATH = '../../answer/'
 
 
+class TimeUtils(object):
+    @staticmethod
+    def get_between_day(b_date, e_date):
+        """
+        获取区间每一天的生成器
+        :param begin_date: str 开始日期
+        :param end_date: str 结束日期，默认为当前日期
+        :return: str
+        """
+        b_date = datetime.datetime.strptime(b_date, "%Y-%m-%d")
+        e_date = datetime.datetime.strptime(e_date, "%Y-%m-%d")
+        while b_date <= e_date:
+            date_str = b_date.strftime("%Y-%m-%d")
+            b_date += datetime.timedelta(days=1)
+            yield date_str
+
+
 class CountAll(object):
 
     def __init__(self, b_date=BEGIN_DATE, e_date=ENDED_DATE, rela_path=FILE_RELA_PATH):
@@ -26,17 +43,9 @@ class CountAll(object):
         self.pattern = re.compile(',')
         self.num = 0
 
-    def get_between_day(self, b_date, e_date):
-        begin_date = datetime.datetime.strptime(b_date, "%Y-%m-%d")
-        end_date = datetime.datetime.strptime(e_date, "%Y-%m-%d")
-        while begin_date <= end_date:
-            date_str = begin_date.strftime("%Y-%m-%d")
-            begin_date += datetime.timedelta(days=1)
-            yield date_str
-
     def count(self):
 
-        for date in self.get_between_day(self.b_date, self.e_date):
+        for date in TimeUtils.get_between_day(self.b_date, self.e_date):
             filename = date + '.txt'
             tp_num = self.count_file(filename)
             self.num += tp_num
