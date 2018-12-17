@@ -36,8 +36,8 @@ class FileUtils(object):
     def get_file_path_and_name(filepath):
         strlist = filepath.split('/')
         fpath = ''
-        for i in strlist:
-            fpath += i
+        for i in range(len(strlist)-1):
+            fpath += strlist[i] + '/'
         fname = strlist[-1]
         return fpath, fname
 
@@ -46,7 +46,8 @@ class FileUtils(object):
         if not os.path.isfile(srcfile):
             print("源文件: %s 不存在!" % srcfile)
         else:
-            fpath, fname = FileUtils.get_file_path_and_name(srcfile)   # 分离文件名和路径
+            fpath, fname = FileUtils.get_file_path_and_name(dstfile)   # 分离文件名和路径
+            print(fpath, fname)
             if not os.path.exists(fpath):
                 os.makedirs(fpath)                # 创建路径
             shutil.copyfile(srcfile, dstfile)      # 复制文件
