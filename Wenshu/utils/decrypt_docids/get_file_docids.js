@@ -33,11 +33,11 @@ function get_file_ids(text) {
 
 
 
-//var fs = require('fs');
-//var data = fs.readFileSync('./2012-01-02.txt');
-//
-//var data_str = data.toString();
-//
-//var iwant = get_file_ids(data_str);
+var fs = require('fs');
+var data = fs.readFileSync('./2001-01-01.txt');
+
+var data_str = data.toString();
+
+var iwant = get_file_ids(data_str);
 
 

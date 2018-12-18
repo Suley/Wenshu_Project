@@ -13,7 +13,7 @@ import sys
 
 
 BEGIN_DATE = '2001-01-01'
-ENDED_DATE = '2011-12-31'
+ENDED_DATE = '2001-01-01'
 
 FILE_RELA_PATH = '../../answer/'
 
