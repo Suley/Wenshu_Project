@@ -60,7 +60,11 @@ class GetDocId(object):
 
         with open(filepath, 'r', encoding='utf-8') as f:
             text = f.read()
-        docids_list = self.decry_js.call("get_file_ids", text)
+        try:
+            docids_list = self.decry_js.call("get_file_ids", text)
+        except:
+            print('文件: %s, 解密异常' % filepath)
+            return 0
 
         topath = filepath.split('.txt')[0]
         topath += '-id.txt'
