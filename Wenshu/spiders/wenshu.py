@@ -12,7 +12,7 @@ import math
 import execjs
 import logging
 from Wenshu.items import WenshuJsonItem
-from Wenshu.utils.case.maptree import WenshuCase
+from Wenshu.utils.case.case import WenshuCase
 from Wenshu.utils.regionAndcourt.court import Court
 from Wenshu.utils.regionAndcourt.region import Region
 from Wenshu.utils.timeutils import TimeUtils
@@ -33,7 +33,7 @@ class WenshuSpider(scrapy.Spider):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.get_date = TimeUtils.get_between_day(kwargs["b_date"], kwargs["e_date"])  # 获取日期的迭代器
-        self.cls_case = WenshuCase()  # 案由类
+        self.case = WenshuCase()  # 案由类
         self.region = Region()  # 地域类
         self.court = Court()  # 法院类
 
@@ -60,7 +60,7 @@ class WenshuSpider(scrapy.Spider):
         if case_id == '#':
             param += '裁判日期:{0} TO {1}'.format(date, date)
         else:
-            param += '案由:{0},裁判日期:{1} TO {2}'.format(self.cls_case.case[case_id].name, date, date)
+            param += '案由:{0},裁判日期:{1} TO {2}'.format(self.case.mp[case_id].name, date, date)
 
         if s_type == 1:
             if s_key:
@@ -153,7 +153,7 @@ class WenshuSpider(scrapy.Spider):
         date = response.meta['date']
         s_type = response.meta['s_type']
         s_key = response.meta['s_key']
-        case_name = self.cls_case.case[response.meta['case_id']].name
+        case_name = self.case.mp[response.meta['case_id']].name
 
         if count != '0':
             if s_type == 0:
@@ -227,7 +227,7 @@ class WenshuSpider(scrapy.Spider):
         """
         case_id = response.meta['case_id']
         date = response.meta['date']
-        sonid_list = self.cls_case.case[case_id].son_list
+        sonid_list = self.case.mp[case_id].son_list
         s_type = response.meta['s_type']
         s_key = response.meta['s_key']
         if len(sonid_list) == 0:
@@ -282,39 +282,3 @@ class WenshuSpider(scrapy.Spider):
         item['json_data'] = text
         item['date'] = response.meta['date']
         yield item
-
-
-
-
-    # def get_docid(self, response):
-    #     """获取一个json数据的DocId，到这里就成功啦！"""
-    #     html = response.text
-    #     try:
-    #         result = eval(json.loads(html))
-    #         runeval = result[0]['RunEval']
-    #         content = result[1:]
-    #     except:
-    #         print("get_docid() json解析错误或者json数据错误")
-    #         yield response.request.copy()
-    #
-    #     for i in content:
-    #         casewenshuid = i.get('文书ID', '')
-    #         docid = self.decrypt_id(runeval, casewenshuid)
-    #         item = WenshuDocidItem()
-    #         item['docid'] = docid
-    #         item['judgedate'] = response.meta['date']
-    #         yield item
-    #     # 输出时间
-    #     #now_time = datetime.datetime.now().strftime('%H:%M:%S')
-    #     #print('***时间: {}'.format(now_time))
-    #
-    # def decrypt_id(self, RunEval, id):
-    #     """docid解密"""
-    #     js = self.js_2.call("GetJs", RunEval)
-    #     js_objs = js.split(";;")
-    #     js1 = js_objs[0] + ';'
-    #     js2 = re.findall(r"_\[_\]\[_\]\((.*?)\)\(\);", js_objs[1])[0]
-    #     key = self.js_2.call("EvalKey", js1, js2)
-    #     key = re.findall(r"\"([0-9a-z]{32})\"", key)[0]
-    #     docid = self.js_2.call("DecryptDocID", key, id)
-    #     return docid

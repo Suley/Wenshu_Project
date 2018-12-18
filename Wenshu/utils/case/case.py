@@ -7,7 +7,6 @@
 @time:  2018/11/27
 """
 import json
-import os
 
 
 class InnerCase(object):
@@ -22,7 +21,7 @@ class InnerCase(object):
 class WenshuCase(object):
 
     def __init__(self):
-        self.case = {'#': InnerCase('#', '请选择')}
+        self.mp = {'#': InnerCase('#', '请选择')}
         # 默认自动读取case.json文件
         with open('Wenshu/utils/case/case.json', encoding='utf-8') as f:
             text = f.read()
@@ -39,8 +38,8 @@ class WenshuCase(object):
         cid = case['id']
         cname = case['name']
         pid = case['parentId']
-        self.case[cid] = InnerCase(cid, cname, pid)
-        self.case[pid].son_list.append(cid)
+        self.mp[cid] = InnerCase(cid, cname, pid)
+        self.mp[pid].son_list.append(cid)
 
     def display_all_case(self):
         """
@@ -56,7 +55,7 @@ class WenshuCase(object):
         :param pid: parentid,可以不写
         :return:
         """
-        cas = self.case[id]
+        cas = self.mp[id]
         print('id: {0}, name: {1}, pid: {2}'.format(id, cas.name, cas.pid))
         for i in cas.son_list:
             self.display_case(i)
