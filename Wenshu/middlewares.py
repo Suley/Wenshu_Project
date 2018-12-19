@@ -4,6 +4,7 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
+import time
 
 import execjs
 import requests
@@ -40,13 +41,29 @@ class ProxyMiddleware(object):
         """准备连接动态代理的基本信息"""
         self.num = 0
         self.proxys = requests.get(PROXY_SERVER_1000).text.split(',')
+        self.proxies_error_time = 1
+
+    def request_proxies(self):
+        try:
+            return requests.get(PROXY_SERVER_1000, timeout=8).text.split(',')
+        except:
+            if self.proxies_error_time < 300:
+                self.proxies_error_time *= 2
+            print('请求代理服务失败...休眠 %s 秒' % self.proxies_error_time)
+            time.sleep(self.proxies_error_time)
+            return None
 
     def process_request(self, request, spider):
         """处理请求request"""
 
-        if self.num > 700:
-            self.proxys = requests.get(PROXY_SERVER_1000).text.split(',')
-            self.num = 0
+        if self.num > 800:
+            while True:
+                proxys = requests.get(PROXY_SERVER_1000).text.split(',')
+                if proxys:
+                    self.proxys = proxys
+                    self.num = 0
+                    self.proxies_error_time = 1
+                    break
 
         request.meta['proxy'] = 'http://' + self.proxys[self.num]
         self.num += 1
@@ -58,7 +75,7 @@ class ProxyMiddleware(object):
         except UnicodeDecodeError:
             html = None
 
-        if response.status != 200 or html is None or 'remind key' in html or 'remind' in html or '请开启JavaScript' in html or '服务不可用' in html:
+        if response.status != 200 or html is None or 'remind' in html or '请开启JavaScript' in html or '服务不可用' in html:
             new_request = request.copy()
             # 为了重复请求不被过滤
             new_request.dont_filter = True
