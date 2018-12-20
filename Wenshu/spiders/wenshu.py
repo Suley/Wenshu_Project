@@ -123,9 +123,9 @@ class WenshuSpider(scrapy.Spider):
         int_count = int(count)
         if int_count <= 200:  # 小于200数据了，收割
             return self.get_pages(count, response)
-        elif s_type < 3:  # 还没搜到3，继续搜
+        elif s_type < 3:  # 地域及法院还没搜到3，继续细分
             return self.region_and_court_formrequest(response)
-        elif s_type == 3:  # 搜到3,根据案由继续细分
+        elif s_type == 3:  # 地域及法院搜到3,根据案由继续细分
             return self.case_formrequsts(count, response)
 
     def error_req(self, response):

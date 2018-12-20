@@ -55,7 +55,6 @@ class ProxyMiddleware(object):
 
     def process_request(self, request, spider):
         """处理请求request"""
-
         if self.num > 800:
             while True:
                 proxys = requests.get(PROXY_SERVER_1000).text.split(',')
@@ -64,7 +63,6 @@ class ProxyMiddleware(object):
                     self.num = 0
                     self.proxies_error_time = 1
                     break
-
         request.meta['proxy'] = 'http://' + self.proxys[self.num]
         self.num += 1
 
@@ -76,10 +74,7 @@ class ProxyMiddleware(object):
             html = None
 
         if response.status != 200 or html is None or 'remind' in html or '请开启JavaScript' in html or '服务不可用' in html:
-            new_request = request.copy()
-            # 为了重复请求不被过滤
-            new_request.dont_filter = True
-            return new_request
+            return request.copy()
         else:
             return response
 

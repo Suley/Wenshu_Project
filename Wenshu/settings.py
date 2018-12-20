@@ -76,9 +76,6 @@ DEFAULT_REQUEST_HEADERS = {
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'Wenshu.middlewares.RandomUserAgentMiddleware': 1,
-    #'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
-    #'Wenshu.middlewares.Vjkl5Middleware': 260,
-    #'Wenshu.middlewares.ProxyMiddleware': 300
     'Wenshu.middlewares.Vjkl5Middleware': 555,
     'Wenshu.middlewares.ProxyMiddleware': 556
 
