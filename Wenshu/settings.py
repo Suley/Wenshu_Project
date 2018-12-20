@@ -76,9 +76,12 @@ DEFAULT_REQUEST_HEADERS = {
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'Wenshu.middlewares.RandomUserAgentMiddleware': 1,
-    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
-    'Wenshu.middlewares.ProxyMiddleware': 300,
-    'Wenshu.middlewares.Vjkl5Middleware': 260
+    #'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
+    #'Wenshu.middlewares.Vjkl5Middleware': 260,
+    #'Wenshu.middlewares.ProxyMiddleware': 300
+    'Wenshu.middlewares.Vjkl5Middleware': 555,
+    'Wenshu.middlewares.ProxyMiddleware': 556
+
 }
 
 # Enable or disable extensions
@@ -181,8 +184,8 @@ USER_AGENTS = [
 
 
 # 设置开始时间，结束时间
-BEGIN_DATE = "2010-01-01"
-END_DATE = "2010-01-31"
+BEGIN_DATE = "2001-01-02"
+END_DATE = "2001-01-02"
 
 
 # 设置日志

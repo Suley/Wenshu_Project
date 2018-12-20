@@ -83,6 +83,11 @@ class ProxyMiddleware(object):
         else:
             return response
 
+    def process_exception(self, request, exception, spider):
+        """处理异常，复制一份request"""
+        print(exception)
+        return request.copy()
+
 
 # 更新vjkl5的中间件
 class Vjkl5Middleware(object):
