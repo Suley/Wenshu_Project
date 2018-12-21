@@ -80,7 +80,6 @@ class ProxyMiddleware(object):
 
     def process_exception(self, request, exception, spider):
         """处理异常，复制一份request"""
-        print(exception)
         return request.copy()
 
 
